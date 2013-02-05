@@ -1,0 +1,10 @@
+Import([
+	'env',
+])
+
+compatObjs=[
+	env.Object('xpsp0compat_c','xpsp0compat.c'),
+	env.Object('xpsp0compat_asm','xpsp0compat.asm'),
+]
+
+Return('compatObjs')

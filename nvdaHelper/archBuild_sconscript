@@ -32,7 +32,7 @@ env.Append(CPPDEFINES=['UNICODE','_CRT_SECURE_NO_DEPRECATE',('LOGLEVEL','${nvdaH
 env.Append(CCFLAGS=['/W3','/WX'])
 env.Append(CXXFLAGS=['/EHsc'])
 env.Append(CPPPATH=['#/include',Dir('.').abspath])
-env.Append(LINKFLAGS=['/incremental:no','/WX'])
+env.Append(LINKFLAGS=['/incremental:no'])
 env.Append(LINKFLAGS='/release') #We always want a checksum in the header
 env.Append(MIDLFLAGS='/x64' if TARGET_ARCH=='x86_64' else '/win32')
 
@@ -57,7 +57,14 @@ if 'symbols' in debug:
 	env.Append(PDB='${TARGET}.pdb')
 	env.Append(LINKFLAGS='/OPT:REF') #having symbols usually turns this off but we have no need for unused symbols
 
+if TARGET_ARCH=='x86':
+	xpsp0compatObj=env.SConscript('xpsp0compat/sconscript',exports=['env'])
+	env.Append(LINKFLAGS=['/nodefaultlib:kernel32.lib',xpsp0compatObj,'kernel32.lib'])
+else:
+	xpsp0compatObj=None
+
 Export('env')
+
 
 acrobatAccessRPCStubs=env.SConscript('acrobatAccess_sconscript')
 Export('acrobatAccessRPCStubs')
@@ -65,6 +72,7 @@ if TARGET_ARCH=='x86':
 	env.Install(sourceTypelibDir,acrobatAccessRPCStubs[0]) #typelib
 
 ia2RPCStubs=env.SConscript('ia2_sconscript')
+env.Depends(ia2RPCStubs,xpsp0compatObj)
 Export('ia2RPCStubs')
 env.Install(libInstallDir,ia2RPCStubs[0]) #proxy dll
 if TARGET_ARCH=='x86':
@@ -72,47 +80,60 @@ if TARGET_ARCH=='x86':
 
 if TARGET_ARCH=='x86':
 	localLib=env.SConscript('local/sconscript')
+	env.Depends(localLib,xpsp0compatObj)
 	Export('localLib')
 	env.Install(libInstallDir,localLib)
 
 clientLib=env.SConscript('client/sconscript')
+env.Depends(clientLib,xpsp0compatObj)
 Export('clientLib')
 env.Install(clientInstallDir,clientLib)
 
 minHookLib=env.SConscript('minHook/sconscript')
+env.Depends(minHookLib,xpsp0compatObj)
 Export('minHookLib')
 env.Install(libInstallDir,minHookLib)
 
 remoteLib=env.SConscript('remote/sconscript')
+env.Depends(remoteLib,xpsp0compatObj)
 Export('remoteLib')
 env.Install(libInstallDir,remoteLib)
 
 if TARGET_ARCH=='x86_64':
 	remoteLoaderProgram=env.SConscript('remoteLoader/sconscript')
+	env.Depends(remoteLoaderProgram,xpsp0compatObj)
 	env.Install(libInstallDir,remoteLoaderProgram)
 
 vbufBaseStaticLib=env.SConscript('vbufBase/sconscript')
 Export('vbufBaseStaticLib')
 
 adobeAcrobatVBufBackend=env.SConscript('vbufBackends/adobeAcrobat/sconscript')
+env.Depends(adobeAcrobatVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,adobeAcrobatVBufBackend)
 
 adobeFlashVBufBackend=env.SConscript('vbufBackends/adobeFlash/sconscript')
+env.Depends(adobeFlashVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,adobeFlashVBufBackend)
 
 lotusNotesRichTextVBufBackend=env.SConscript('vbufBackends/lotusNotesRichText/sconscript')
+env.Depends(lotusNotesRichTextVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,lotusNotesRichTextVBufBackend)
 
 geckoVBufBackend=env.SConscript('vbufBackends/gecko_ia2/sconscript')
+env.Depends(geckoVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,geckoVBufBackend)
 
 mshtmlVBufBackend=env.SConscript('vbufBackends/mshtml/sconscript')
+env.Depends(mshtmlVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,mshtmlVBufBackend)
 
 webKitVBufBackend=env.SConscript('vbufBackends/webKit/sconscript')
+env.Depends(webKitVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,webKitVBufBackend)
 
 if TARGET_ARCH=='x86' and os.path.isdir(Dir('#include/espeak').abspath):
-	env.SConscript('espeak/sconscript')
+	espeak=env.SConscript('espeak/sconscript')
+	env.Depends(espeak,xpsp0compatObj)
 if TARGET_ARCH=='x86' and os.path.isdir(Dir('#include/liblouis').abspath):
-	env.SConscript('liblouis/sconscript')
+	liblouis=env.SConscript('liblouis/sconscript')
+	env.Depends(liblouis,xpsp0compatObj)
