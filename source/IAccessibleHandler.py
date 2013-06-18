@@ -369,7 +369,12 @@ def accFocus(ia):
 		if isinstance(res,comtypes.client.lazybind.Dispatch) or isinstance(res,comtypes.client.dynamic._Dispatch) or isinstance(res,IUnknown):
 			new_ia=normalizeIAccessible(res)
 			new_child=0
+		elif res==0:
+			# #3005: Don't call accChild for CHILDID_SELF.
+			new_ia=ia
+			new_child=res
 		elif isinstance(res,int):
+			# accFocus can return a child ID even when there is actually an IAccessible for that child; e.g. Lotus Symphony.
 			try:
 				new_ia=ia.accChild(res)
 			except:
@@ -669,6 +674,7 @@ class SecureDesktopNVDAObject(NVDAObjects.window.Desktop):
 		return clsList
 
 	def _get_name(self):
+		# Translators: Message to indicate User Account Control (UAC) or other secure desktop screen is active.
 		return _("Secure Desktop")
 
 	def _get_role(self):
@@ -930,7 +936,7 @@ def getRecursiveTextFromIAccessibleTextObject(obj,startOffset=0,endOffset=-1):
 	except:
 		return text
 	textList=[]
-	for i in range(len(text)):
+	for i in xrange(len(text)):
 		t=text[i]
 		if ord(t)==0xFFFC:
 			try:

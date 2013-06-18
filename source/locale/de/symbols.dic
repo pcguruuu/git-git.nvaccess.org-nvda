@@ -12,17 +12,16 @@ symbols:
 # Identifizierungszeichen	Ersetzungen[[	Ebene][	Bereich]][	# Angezeigter Name]
 
 # Komplexe Symbole
-. sentence ending	punkt
+. sentence ending	Punkt
 ! sentence ending	Ausrufezeichen
 ? sentence ending	Fragezeichen
 ; phrase ending	Semikolon
 : phrase ending	Doppelpunkt
-; phrase ending	Semikolon
 date separator		none	always
 in-word '	Apostroph
 
 # Unsichtbare Zeichen
-\0	leer	char	# Null
+\0	Leer	char	# Null
 \t	Tabulator
 \n	Zeilenumbruch
 \f	Seitenumbruch
@@ -35,18 +34,20 @@ in-word '	Apostroph
 "	Anführungszeichen
 \#	Nummer
 $	Dollar
-£	Pfund
+£	Pfund Sterling
 €	Euro
+¢	sent
+¥	Yenn
 %	Prozent
 &	Und
 '	Apostroph
-(	runde Klammer auf
-)	runde Klammer zu
+(	Runde Klammer auf
+)	Runde Klammer zu
 *	Stern
 +	Plus
 ,	Komma
 -	Bindestrich
-.	punkt
+.	Punkt
 /	Schrägstrich
 :	Doppelpunkt
 ;	Semikolon
@@ -55,50 +56,51 @@ $	Dollar
 =	Gleich
 ?	Fragezeichen
 @	Klammeraffe
-[	eckige Klammer auf
-]	eckige Klammer zu
+[	Eckige Klammer auf
+]	Eckige Klammer zu
 \\	Backslash
 ^	Dach
 _	Unterstrich
 `	Apostroph
-{	geschweifte Klammer auf
-}	geschweifte Klammer zu
-|	senkrechter Strich
+{	Geschweifte Klammer auf
+}	Geschweifte Klammer zu
+|	Senkrechter Strich
 ~	Tilde
 
 # Weitere Zeichen
-•	Aufzählungszeichen	some
+•	Aufzählungszeichen
 …	Punkt Punkt Punkt
 ...	Punkt Punkt Punkt
-	Aufzählungszeichen	some
+	Aufzählungszeichen
 “	Anführungszeichen oben
-”	Anführungszeichen unten
-‘	Anführungszeichen oben 
+”	Anführungszeichen unten	all
+‘	Anführungszeichen oben
 ’	Anführungszeichen unten
+„	Anführungszeichen unten	all
 –	Strich
 —	Gedankenstrich
 ●	Kreis
 ¨	Trema
-‏	von rechts nach links Markierung
-‎	von links nach rechts Markierung
-■	schwarzes Quadrat 
+‏	Markierung von rechts nach links
+‎	Markierung von links nach rechts
+■	Schwarzes Quadrat
 ➔	Pfeil nach rechts
 →	Pfeil nach rechts
- §	Paragraf	some
-¥	Yen	all	norep
-¢	Cent	all	norep
-°	Grad	most
+§	Paragraf
+°	Grad
 Þ	Aufzählung	some
-«	doppelte gewinkelte Klammer auf	most
-»	doppelte gewinkelte Klammer zu	most
-µ	My	most
-¹	hoch Eins	some
-²	hoch Zwei	some
-³	hoch Drei	some
-®	Eingetragenes Warenzeichen	some
-™	Eingetragenes Warenzeichen	some
-©	Copyright	some
-±	Plus Minus	some
-×	mal	some
-÷	durch	some
-
+«	Doppelte gewinkelte Klammer auf	most
+»	Doppelte gewinkelte Klammer zu	most
+µ	My
+¹	Hoch Eins
+²	Hoch Zwei
+³	Hoch Drei
+®	Registriertes Warenzeichen
+™	Eingetragenes Warenzeichen
+©	Copyright
+±	Plus Minus
+×	Mal
+÷	Durch
+→	Rechtspfeil	some
+✓	Häkchen	some
+✔	Großes Häkchen	some

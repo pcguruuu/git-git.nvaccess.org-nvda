@@ -183,18 +183,9 @@ An NVDAObject for a window
 
 	def _get_displayText(self):
 		"""The text at this object's location according to the display model for this object's window."""
-		try:
-			left,top,width,height=self.location
-		except TypeError:
-			log.debugWarning("No location, returning no text")
-			return ""
 		import displayModel
-		bindingHandle=self.appModule.helperLocalBindingHandle
-		if not bindingHandle:
-			log.debugWarning("appModule has no binding handle")
-			return ""
-		text,rects=displayModel.getWindowTextInRect(bindingHandle,self.windowHandle,left,top,left+width,top+height,8,32)
-		return text or ""
+		import textInfos
+		return displayModel.DisplayModelTextInfo(self,textInfos.POSITION_ALL).text
 
 	def redraw(self):
 		"""Redraw the display for this object.
@@ -397,9 +388,6 @@ class DisplayModelLiveText(LiveText, Window):
 		super(DisplayModelLiveText, self).stopMonitoring()
 		displayModel.requestTextChangeNotifications(self, False)
 
-	def _getTextLines(self):
-		return self.displayText.splitlines()
-
 windowClassMap={
 	"EDIT":"Edit",
 	"TTntEdit.UnicodeClass":"Edit",
@@ -431,6 +419,8 @@ windowClassMap={
 	"WFMAINRE":"RichEdit20",
 	"RichEdit20A":"RichEdit20",
 	"RichEdit20W":"RichEdit20",
+	"TChatRichEdit":"RichEdit20",
+	"TAccessibleEdit":"Edit",
 	"TskRichEdit.UnicodeClass":"RichEdit20",
 	"RichEdit20WPT":"RichEdit20",
 	"RICHEDIT60W":"RICHEDIT50W",

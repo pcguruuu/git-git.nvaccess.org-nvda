@@ -919,6 +919,9 @@ VBufStorage_fieldNode_t* MshtmlVBufBackend_t::fillVBuf(VBufStorage_buffer_t* buf
 			}
 		} else if(ariaRole.compare(L"application")==0) {
 			IARole=ROLE_SYSTEM_APPLICATION;
+		} else if(ariaRole.compare(L"button")==0) {
+			//IE does not override accRole for links with an ARIA role of button (#2750)
+			IARole=ROLE_SYSTEM_PUSHBUTTON;
 		} else if(ariaRole.compare(L"dialog")==0) {
 			IARole=ROLE_SYSTEM_DIALOG;
 		}
@@ -1059,7 +1062,7 @@ VBufStorage_fieldNode_t* MshtmlVBufBackend_t::fillVBuf(VBufStorage_buffer_t* buf
 		contentString=L"\n";
 	} else if (nodeName.compare(L"math")==0) {
 		contentString=IAName;
-	} else if(IARole==ROLE_SYSTEM_APPLICATION||IARole==ROLE_SYSTEM_DIALOG) {
+	} else if(IARole==ROLE_SYSTEM_APPLICATION||IARole==ROLE_SYSTEM_DIALOG||IARole==ROLE_SYSTEM_OUTLINE) {
 		contentString=L" ";
 	} else {
 		renderChildren=true;

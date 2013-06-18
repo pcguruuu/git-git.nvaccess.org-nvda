@@ -46,15 +46,6 @@ negative number	マイナス	none	norep
 数字の間の全角カンマ		none	always
 
 # Other characters
-•	ナカテン	most
-…	サンテン
-	ナカテン	most
-“	ヒダリニジューインヨーフ	most
-”	ミギニジューインヨーフ	most
-–	エンダッシュ
-—	エムダッシュ
-●	クロマル
-¨	ウムラウト	all
 
 # Whitespace
 \0	ブランク	char
@@ -109,35 +100,21 @@ _	アンダーライン	some
 
 # Other characters
 •	バレット	most
-…	サンテン
 ...	ドットドットドット
 	バレット
-“	ヒダリニジューインヨーフ	most
-”	ミギニジューインヨーフ	most
-‘	ヒダリインヨーフ	most
-’	ミギインヨーフ	most
+◦	バレット
+▪	バレット
 –	エンダッシュ
 —	エムダッシュ
-●	クロマル
-‎	ヒダリカラミギマーク	some
-‏	ミギカラヒダリマーク	some
-■	クロシカク
+‎	ヒダリカラミギマーク	char
+‏	ミギカラヒダリマーク	char
 ➔	ミギヤジルシ
-§	セクション
-°	ド	all
-≪	ヒジョーニチイサイ
-≫	ヒジョーニオオキイ
-μ	マイクロ	all
 ¹	ウワツキイチ	all
 ²	ウワツキニ	all
 ³	ウワツキサン	all
 ®	アール
 ™	ティーエム
 ©	シー
-±	プラスマイナス	all
-×	カケル	all
-÷	ワル	all
-→	ミギヤジルシ
 ✓	チェック
 ✔	チェック
 
@@ -165,6 +142,8 @@ _	アンダーライン	some
 ；	セミコロン	some
 ？	ギモンフ	some
 ！	カンタンフ	some
+゙	ダクテン	char	always
+゚	ハンダクテン	char	always
 ゛	ダクテン	char	always
 ゜	ハンダクテン	char	always
 ´	アクサンテギュー	most
@@ -173,15 +152,14 @@ _	アンダーライン	some
 ＾	ベキジョー	all
 ￣	オーバーライン	most
 ＿	アンダーライン	most
-ヽ	クリカエシ	all	always
-ヾ	クリカエシ ダクテン	all	always
-ゝ	クリカエシ	all	always
-ゞ	クリカエシ ダクテン	all	always
+ヽ	クリカエシ	char	always
+ヾ	クリカエシ ダクテン	char	always
+ゝ	クリカエシ	char	always
+ゞ	クリカエシ ダクテン	char	always
 〃	オナジク	all
 仝	ドージョー	all
-々	オドリジ	all	always
+々	オドリジ	char	always
 〆	シメ	all	always
-〇	レイ	all
 ―	ダッシュ	some
 ‐	ハイフン	some
 ／	スラッシュ	some
@@ -213,9 +191,9 @@ _	アンダーライン	some
 』	ニジューカギトジ	most
 【	クロカッコ	most
 】	クロカッコトジ	most
-＋	プラス	all
-－	マイナス	all
-±	プラスマイナス	all
+＋	プラス	some
+－	マイナス	some
+±	プラスマイナス	some
 ×	カケル	some
 ÷	ワル	some
 ＝	イコール	some
@@ -232,11 +210,11 @@ _	アンダーライン	some
 ′	フン	all
 ″	ビョー	all
 ℃	ドシー	all
-％	パーセント	all
+％	パーセント	some
 ＃	シャープ	some
-＆	アンド	all
-＊	アスタリスク	all
-＠	アットマーク	all
+＆	アンド	some
+＊	アスタリスク	some
+＠	アット	some
 §	セクション	all
 ☆	ホシ	some
 ★	クロボシ	some
@@ -300,120 +278,120 @@ _	アンダーライン	some
 †	ダガー	most
 ‡	ダブルダガー	most
 ¶	ダンラク	most
-Α	アルファ	all
-Β	ベータ	all
-Γ	ガンマ	all
-Δ	デルタ	all
-Ε	イプシロン	all
-Ζ	ツェータ	all
-Η	イータ	all
-Θ	シータ	all
-Ι	イオータ	all
-Κ	カッパ	all
-Λ	ラムダ	all
-Μ	ミュー	all
-Ν	ニュー	all
-Ξ	グサイ	all
-Ο	オミクロン	all
-Π	パイ	all
-Ρ	ロー	all
-Σ	シグマ	all
-Τ	タウ	all
-Υ	ウプシロン	all
-Φ	ファイ	all
-Χ	カイ	all
-Ψ	プサイ	all
-Ω	オメガ	all
-α	アルファ	all
-β	ベータ	all
-γ	ガンマ	all
-δ	デルタ	all
-ε	イプシロン	all
-ζ	ツェータ	all
-η	イータ	all
-θ	シータ	all
-ι	イオータ	all
-κ	カッパ	all
-λ	ラムダ	all
-μ	ミュー	all
-ν	ニュー	all
-ξ	グサイ	all
-ο	オミクロン	all
-π	パイ	all
-ρ	ロー	all
-σ	シグマ	all
-τ	タウ	all
-υ	ウプシロン	all
-φ	ファイ	all
-χ	カイ	all
-ψ	プサイ	all
-ω	オメガ	all
-А	アー	all
-Б	ベー	all
-В	ブエー	all
-Г	ゲー	all
-Д	デー	all
-Е	イエー	all
-Ё	ヨー	all
-Ж	ジェー	all
-З	ゼー	all
-И	イー	all
-Й	イークラトコエ	all
-К	カー	all
-Л	エリ	all
-М	エム	all
-Н	エヌ	all
-О	オー	all
-П	ペー	all
-Р	エル	all
-С	エス	all
-Т	テー	all
-У	ウー	all
-Ф	エフ	all
-Х	ハー	all
-Ц	ツェー	all
-Ч	チェー	all
-Ш	シアー	all
-Щ	シシャー	all
-Ъ	トゥブョールドゥィズナーク	all
-Ы	ウイ	all
-Ь	ミャーフキーズナーク	all
-Э	エー	all
-Ю	ユー	all
-Я	ヤー	all
-а	アー	all
-б	ベー	all
-в	ブエー	all
-г	ゲー	all
-д	デー	all
-е	イエー	all
-ё	ヨー	all
-ж	ジェー	all
-з	ゼー	all
-и	イー	all
-й	イークラトコエ	all
-к	カー	all
-л	エリ	all
-м	エム	all
-н	エヌ	all
-о	オー	all
-п	ペー	all
-р	エル	all
-с	エス	all
-т	テー	all
-у	ウー	all
-ф	エフ	all
-х	ハー	all
-ц	ツェー	all
-ч	チェー	all
-ш	シアー	all
-щ	シシャー	all
-ъ	トゥブョールドゥィズナーク	all
-ы	ウイ	all
-ь	ミャーフキーズナーク	all
-э	エー	all
-ю	ユー	all
-я	ヤー	all
+Α	アルファ	none
+Β	ベータ	none
+Γ	ガンマ	none
+Δ	デルタ	none
+Ε	イプシロン	none
+Ζ	ツェータ	none
+Η	イータ	none
+Θ	シータ	none
+Ι	イオータ	none
+Κ	カッパ	none
+Λ	ラムダ	none
+Μ	ミュー	none
+Ν	ニュー	none
+Ξ	グサイ	none
+Ο	オミクロン	none
+Π	パイ	none
+Ρ	ロー	none
+Σ	シグマ	none
+Τ	タウ	none
+Υ	ウプシロン	none
+Φ	ファイ	none
+Χ	カイ	none
+Ψ	プサイ	none
+Ω	オメガ	none
+α	アルファ	none
+β	ベータ	none
+γ	ガンマ	none
+δ	デルタ	none
+ε	イプシロン	none
+ζ	ツェータ	none
+η	イータ	none
+θ	シータ	none
+ι	イオータ	none
+κ	カッパ	none
+λ	ラムダ	none
+μ	ミュー	none
+ν	ニュー	none
+ξ	グサイ	none
+ο	オミクロン	none
+π	パイ	none
+ρ	ロー	none
+σ	シグマ	none
+τ	タウ	none
+υ	ウプシロン	none
+φ	ファイ	none
+χ	カイ	none
+ψ	プサイ	none
+ω	オメガ	none
+А	アー	none
+Б	ベー	none
+В	ブエー	none
+Г	ゲー	none
+Д	デー	none
+Е	イエー	none
+Ё	ヨー	none
+Ж	ジェー	none
+З	ゼー	none
+И	イー	none
+Й	イークラトコエ	none
+К	カー	none
+Л	エリ	none
+М	エム	none
+Н	エヌ	none
+О	オー	none
+П	ペー	none
+Р	エル	none
+С	エス	none
+Т	テー	none
+У	ウー	none
+Ф	エフ	none
+Х	ハー	none
+Ц	ツェー	none
+Ч	チェー	none
+Ш	シアー	none
+Щ	シシャー	none
+Ъ	トゥブョールドゥィズナーク	none
+Ы	ウイ	none
+Ь	ミャーフキーズナーク	none
+Э	エー	none
+Ю	ユー	none
+Я	ヤー	none
+а	アー	none
+б	ベー	none
+в	ブエー	none
+г	ゲー	none
+д	デー	none
+е	イエー	none
+ё	ヨー	none
+ж	ジェー	none
+з	ゼー	none
+и	イー	none
+й	イークラトコエ	none
+к	カー	none
+л	エリ	none
+м	エム	none
+н	エヌ	none
+о	オー	none
+п	ペー	none
+р	エル	none
+с	エス	none
+т	テー	none
+у	ウー	none
+ф	エフ	none
+х	ハー	none
+ц	ツェー	none
+ч	チェー	none
+ш	シアー	none
+щ	シシャー	none
+ъ	トゥブョールドゥィズナーク	none
+ы	ウイ	none
+ь	ミャーフキーズナーク	none
+э	エー	none
+ю	ユー	none
+я	ヤー	none
 ─	ケイセン	most
 │	ケイセン	most
 ┌	ヒダリウエ	most
@@ -440,75 +418,79 @@ _	アンダーライン	some
 ┥	タテセンヒダリ	most
 ┸	ヨコセンウエ	most
 ╂	タテフト クロス	most
-①	マル 1	all
-②	マル 2	all
-③	マル 3	all
-④	マル 4	all
-⑤	マル 5	all
-⑥	マル 6	all
-⑦	マル 7	all
-⑧	マル 8	all
-⑨	マル 9	all
-⑩	マル 10	all
-⑪	マル 11	all
-⑫	マル 12	all
-⑬	マル 13	all
-⑭	マル 14	all
-⑮	マル 15	all
-⑯	マル 16	all
-⑰	マル 17	all
-⑱	マル 18	all
-⑲	マル 19	all
-⑳	マル 20	all
-Ⅰ	ワン	all
-Ⅱ	ツー	all
-Ⅲ	スリー	all
-Ⅳ	フォー	all
-Ⅴ	ファイブ	all
-Ⅵ	シックス	all
-Ⅶ	セブン	all
-Ⅷ	エイト	all
-Ⅸ	ナイン	all
-Ⅹ	テン	all
-㍉	ミリ	all
-㌔	キロ	all
-㌢	センチ	all
-㍍	メートル	all
-㌘	グラム	all
-㌧	トン	all
-㌃	アール	all
-㌶	ヘクタール	all
-㍑	リットル	all
-㍗	ワット	all
-㌍	カロリー	all
-㌦	ドル	all
-㌣	セント	all
-㌫	パーセント	all
-㍊	ミリバール	all
-㌻	ページ	all
-㎜	ミリメートル	all
-㎝	センチメートル	all
-㎞	キロメートル	all
-㎎	ミリグラム	all
-㎏	キログラム	all
-㏄	シーシー	all
-㎡	ヘイホーメートル	all
-㍻	ヘイセイ	all
-№	ナンバー	all
-㏍	ケイケイ	all
-℡	テレフォン	all
-㊤	マル ウエ	all
-㊥	マル ナカ	all
-㊦	マル シタ	all
-㊧	マル ヒダリ	all
-㊨	マル ミギ	all
-㈱	カッコ カブ	all
-㈲	カッコ ユー	all
-㈹	カッコ ダイ	all
-㍾	メイジ	all
-㍽	タイショー	all
-㍼	ショーワ	all
+①	マル 1	none
+②	マル 2	none
+③	マル 3	none
+④	マル 4	none
+⑤	マル 5	none
+⑥	マル 6	none
+⑦	マル 7	none
+⑧	マル 8	none
+⑨	マル 9	none
+⑩	マル 10	none
+⑪	マル 11	none
+⑫	マル 12	none
+⑬	マル 13	none
+⑭	マル 14	none
+⑮	マル 15	none
+⑯	マル 16	none
+⑰	マル 17	none
+⑱	マル 18	none
+⑲	マル 19	none
+⑳	マル 20	none
+Ⅰ	ワン	none
+Ⅱ	ツー	none
+Ⅲ	スリー	none
+Ⅳ	フォー	none
+Ⅴ	ファイブ	none
+Ⅵ	シックス	none
+Ⅶ	セブン	none
+Ⅷ	エイト	none
+Ⅸ	ナイン	none
+Ⅹ	テン	none
+㍉	ミリ	none
+㌔	キロ	none
+㌢	センチ	none
+㍍	メートル	none
+㌘	グラム	none
+㌧	トン	none
+㌃	アール	none
+㌶	ヘクタール	none
+㍑	リットル	none
+㍗	ワット	none
+㌍	カロリー	none
+㌦	ドル	none
+㌣	セント	none
+㌫	パーセント	none
+㍊	ミリバール	none
+㌻	ページ	none
+㎜	ミリメートル	none
+㎝	センチメートル	none
+㎞	キロメートル	none
+㎎	ミリグラム	none
+㎏	キログラム	none
+㏄	シーシー	none
+㎡	ヘイホーメートル	none
+㍻	ヘイセイ	none
+№	ナンバー	none
+㏍	ケイケイ	none
+℡	テレフォン	none
+㊤	マル ウエ	none
+㊥	マル ナカ	none
+㊦	マル シタ	none
+㊧	マル ヒダリ	none
+㊨	マル ミギ	none
+㈱	カッコ カブ	none
+㈲	カッコ ユー	none
+㈹	カッコ ダイ	none
+㍾	メイジ	none
+㍽	タイショー	none
+㍼	ショーワ	none
 ＇	アポストロフィー	all
 ＂	コーテーション	all
 〝	ヒゲヒラキ	all
 〟	ヒゲトジ	all
+♠	スペード	most
+♡	ハート	most
+♢	ダイヤ	most
+♣	クラブ	most

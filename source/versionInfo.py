@@ -1,6 +1,6 @@
 #versionInfo.py
 #A part of NonVisual Desktop Access (NVDA)
-#Copyright (C) 2006-2012 NV Access Limited
+#Copyright (C) 2006-2013 NV Access Limited
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
 
@@ -10,27 +10,26 @@ def _updateVersionFromVCS():
 	"""Update the version from version control system metadata if possible.
 	"""
 	global version
-	# The root of the bzr working tree will be the parent of this module's directory.
-	branchPath = os.path.dirname(os.path.dirname(__file__))
-	locationPath = os.path.join(branchPath, ".bzr", "branch", "location")
+	# The root of the Git working tree will be the parent of this module's directory.
+	gitDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".git")
 	try:
-		# If this is a lightweight checkout of a local branch, use that branch.
-		branchPath = file(locationPath, "r").read().split("file:///", 1)[1]
-	except (IOError, IndexError):
-		pass
-
-	lastRevPath = os.path.join(branchPath, ".bzr", "branch", "last-revision")
-	try:
-		# If running from a bzr branch, use version info from that.
-		rev = file(lastRevPath, "r").read().split(" ")[0]
-		branch = os.path.basename(os.path.abspath(branchPath))
-		version = "bzr-%s-%s" % (branch, rev)
-	except (IOError, IndexError):
+		head = file(os.path.join(gitDir, "HEAD"), "r").read().rstrip()
+		if not head.startswith("ref: "):
+			# Detached head.
+			version = "source-DETACHED-%s" % head[:7]
+			return
+		# Strip the "ref: " prefix to get the ref.
+		ref = head[5:]
+		commit = file(os.path.join(gitDir, ref), "r").read().rstrip()
+		version = "source-%s-%s" % (
+			os.path.basename(ref),
+			commit[:7])
+	except:
 		pass
 
 name="NVDA"
 longName=_("NonVisual Desktop Access")
-version="2013.1dev"
+version="2013.2dev"
 publisher="unknown"
 updateVersionType=None
 try:
@@ -39,7 +38,7 @@ except ImportError:
 	_updateVersionFromVCS()
 description=_("A free and open source screen reader for Microsoft Windows")
 url="http://www.nvda-project.org/"
-copyrightYears="2006-2012"
+copyrightYears="2006-2013"
 copyright=_("Copyright (C) {years} NVDA Contributors").format(
 	years=copyrightYears)
 aboutMessage=_(u"""{longName} ({name})

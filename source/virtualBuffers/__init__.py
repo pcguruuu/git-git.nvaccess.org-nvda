@@ -98,20 +98,15 @@ class VirtualBufferTextInfo(textInfos.offsets.OffsetsTextInfo):
 		return self._getOffsetsFromFieldIdentifier(docHandle,ID)
 
 	def _getOffsetsFromNVDAObject(self, obj):
-		ancestorCount = 0
 		while True:
 			try:
 				return self._getOffsetsFromNVDAObjectInBuffer(obj)
 			except LookupError:
 				pass
-			# Interactive list/combo box descendants aren't rendered into the buffer, even though they are still considered part of it.
-			# Use the list/combo box in this case.
-			if ancestorCount == 2:
-				# This is not a list/combo box descendant.
-				break
+			# Interactive list/combo box/tree view descendants aren't rendered into the buffer, even though they are still considered part of it.
+			# Use the container in this case.
 			obj = obj.parent
-			ancestorCount += 1
-			if not obj or obj.role not in (controlTypes.ROLE_LIST, controlTypes.ROLE_COMBOBOX):
+			if not obj or obj.role not in (controlTypes.ROLE_LIST, controlTypes.ROLE_COMBOBOX, controlTypes.ROLE_GROUPING, controlTypes.ROLE_TREEVIEW, controlTypes.ROLE_TREEVIEWITEM):
 				break
 		raise LookupError
 
@@ -245,6 +240,7 @@ class VirtualBufferTextInfo(textInfos.offsets.OffsetsTextInfo):
 		textList = []
 		landmark = field.get("landmark")
 		if formatConfig["reportLandmarks"] and reportStart and landmark and field.get("_startOfNode"):
+			# Translators: This is spoken and brailled to indicate a landmark (example output: main landmark).
 			textList.append(_("%s landmark") % aria.landmarkRoles[landmark])
 		text = super(VirtualBufferTextInfo, self).getControlFieldBraille(field, ancestors, reportStart, formatConfig)
 		if text:
@@ -640,11 +636,13 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 			return
 		if self._hadFirstGainFocus:
 			# If this buffer has already had focus once while loaded, this is a refresh.
+			# Translators: Reported when a page reloads (example: after refreshing a webpage).
 			speech.speakMessage(_("Refreshed"))
 		if api.getFocusObject().treeInterceptor == self:
 			self.event_treeInterceptor_gainFocus()
 
 	def _loadProgress(self):
+		# Translators: Reported while loading a document.
 		ui.message(_("Loading document..."))
 
 	def unloadBuffer(self):
@@ -825,7 +823,7 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 		@param obj: The object in question.
 		@type obj: L{NVDAObjects.NVDAObject}
 		"""
-		return obj.role not in self.APPLICATION_ROLES and controlTypes.STATE_FOCUSABLE in obj.states
+		return obj.role not in self.APPLICATION_ROLES and obj.isFocusable
 
 	def script_activateLongDesc(self,gesture):
 		info=self.makeTextInfo(textInfos.POSITION_CARET)
@@ -845,6 +843,7 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 	def script_activatePosition(self,gesture):
 		info=self.makeTextInfo(textInfos.POSITION_CARET)
 		self._activatePosition(info)
+	# Translators: the description for the activatePosition script on virtualBuffers.
 	script_activatePosition.__doc__ = _("activates the current object in the document")
 
 	def script_refreshBuffer(self,gesture):
@@ -853,12 +852,18 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 			return
 		self.unloadBuffer()
 		self.loadBuffer()
+	# Translators: the description for the refreshBuffer script on virtualBuffers.
 	script_refreshBuffer.__doc__ = _("Refreshes the document content")
 
 	def script_toggleScreenLayout(self,gesture):
 		config.conf["virtualBuffers"]["useScreenLayout"]=not config.conf["virtualBuffers"]["useScreenLayout"]
-		onOff=_("on") if config.conf["virtualBuffers"]["useScreenLayout"] else _("off")
-		speech.speakMessage(_("use screen layout %s")%onOff)
+		if config.conf["virtualBuffers"]["useScreenLayout"]:
+			# Translators: Presented when use screen layout option is toggled.
+			speech.speakMessage(_("use screen layout on"))
+		else:
+			# Translators: Presented when use screen layout option is toggled.
+			speech.speakMessage(_("use screen layout off"))
+	# Translators: the description for the toggleScreenLayout script on virtualBuffers.
 	script_toggleScreenLayout.__doc__ = _("Toggles on and off if the screen layout is preserved while rendering the document content")
 
 	def _searchableAttributesForNodeType(self,nodeType):
@@ -943,6 +948,7 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 			d.Destroy()
 			gui.mainFrame.postPopup()
 		wx.CallAfter(run)
+	# Translators: the description for the elements list dialog script on virtualBuffers.
 	script_elementsList.__doc__ = _("Presents a list of links, headings or landmarks")
 
 	def shouldPassThrough(self, obj, reason=None):
@@ -964,7 +970,7 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 		states = obj.states
 		role = obj.role
 		# Menus sometimes get focus due to menuStart events even though they don't report as focused/focusable.
-		if controlTypes.STATE_FOCUSABLE not in states and controlTypes.STATE_FOCUSED not in states and role != controlTypes.ROLE_POPUPMENU:
+		if not obj.isFocusable and controlTypes.STATE_FOCUSED not in states and role != controlTypes.ROLE_POPUPMENU:
 			return False
 		if controlTypes.STATE_READONLY in states and role not in (controlTypes.ROLE_EDITABLETEXT, controlTypes.ROLE_COMBOBOX):
 			return False
@@ -1014,18 +1020,14 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 	script_disablePassThrough.ignoreTreeInterceptorPassThrough = True
 
 	def script_collapseOrExpandControl(self, gesture):
-		if self.passThrough:
-			gesture.send()
-			if not self.disableAutoPassThrough:
-				self.passThrough = False
-				reportPassThrough(self)
-		else:
-			oldFocus = api.getFocusObject()
-			oldFocusStates = oldFocus.states
-			gesture.send()
-			if oldFocus.role == controlTypes.ROLE_COMBOBOX and controlTypes.STATE_COLLAPSED in oldFocusStates:
-				self.passThrough = True
-				reportPassThrough(self)
+		oldFocus = api.getFocusObject()
+		oldFocusStates = oldFocus.states
+		gesture.send()
+		if controlTypes.STATE_COLLAPSED in oldFocusStates:
+			self.passThrough = True
+		elif not self.disableAutoPassThrough:
+			self.passThrough = False
+		reportPassThrough(self)
 	script_collapseOrExpandControl.ignoreTreeInterceptorPassThrough = True
 
 	def _tabOverride(self, direction):
@@ -1315,7 +1317,7 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 			tableID, origRow, origCol, origRowSpan, origColSpan = self._getTableCellCoords(self.selection)
 		except LookupError:
 			# Translators: The message reported when a user attempts to use a table movement command
-			# when the cursor is not withnin a table.
+			# when the cursor is not within a table.
 			ui.message(_("Not in a table cell"))
 			return
 
@@ -1334,18 +1336,22 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 
 	def script_nextRow(self, gesture):
 		self._tableMovementScriptHelper(axis="row", movement="next")
+	# Translators: the description for the next table row script on virtualBuffers.
 	script_nextRow.__doc__ = _("moves to the next table row")
 
 	def script_previousRow(self, gesture):
 		self._tableMovementScriptHelper(axis="row", movement="previous")
+	# Translators: the description for the previous table row script on virtualBuffers.
 	script_previousRow.__doc__ = _("moves to the previous table row")
 
 	def script_nextColumn(self, gesture):
 		self._tableMovementScriptHelper(axis="column", movement="next")
+	# Translators: the description for the next table column script on virtualBuffers.
 	script_nextColumn.__doc__ = _("moves to the next table column")
 
 	def script_previousColumn(self, gesture):
 		self._tableMovementScriptHelper(axis="column", movement="previous")
+	# Translators: the description for the previous table column script on virtualBuffers.
 	script_previousColumn.__doc__ = _("moves to the previous table column")
 
 	APPLICATION_ROLES = (controlTypes.ROLE_APPLICATION, controlTypes.ROLE_DIALOG)
@@ -1460,7 +1466,9 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 		container.collapse(end=True)
 		if container._startOffset>=container._getStoryLength():
 			container.move(textInfos.UNIT_CHARACTER,-1)
-			# Translators: a message reported when landing at the end of a browse mode document when trying to jump to the end of the current container. 
+			# Translators: a message reported when:
+			# Review cursor is at the bottom line of the current navigator object.
+			# Landing at the end of a browse mode document when trying to jump to the end of the current container. 
 			ui.message(_("bottom"))
 		self._set_selection(container, reason=self.REASON_QUICKNAV)
 		container.expand(textInfos.UNIT_LINE)
@@ -1502,58 +1510,247 @@ class VirtualBuffer(cursorManager.CursorManager, treeInterceptorHandler.TreeInte
 
 # Add quick navigation scripts.
 qn = VirtualBuffer.addQuickNav
-qn("heading", key="h", nextDoc=_("moves to the next heading"), nextError=_("no next heading"),
-	prevDoc=_("moves to the previous heading"), prevError=_("no previous heading"))
-qn("heading1", key="1", nextDoc=_("moves to the next heading at level 1"), nextError=_("no next heading at level 1"),
-	prevDoc=_("moves to the previous heading at level 1"), prevError=_("no previous heading at level 1"))
-qn("heading2", key="2", nextDoc=_("moves to the next heading at level 2"), nextError=_("no next heading at level 2"),
-	prevDoc=_("moves to the previous heading at level 2"), prevError=_("no previous heading at level 2"))
-qn("heading3", key="3", nextDoc=_("moves to the next heading at level 3"), nextError=_("no next heading at level 3"),
-	prevDoc=_("moves to the previous heading at level 3"), prevError=_("no previous heading at level 3"))
-qn("heading4", key="4", nextDoc=_("moves to the next heading at level 4"), nextError=_("no next heading at level 4"),
-	prevDoc=_("moves to the previous heading at level 4"), prevError=_("no previous heading at level 4"))
-qn("heading5", key="5", nextDoc=_("moves to the next heading at level 5"), nextError=_("no next heading at level 5"),
-	prevDoc=_("moves to the previous heading at level 5"), prevError=_("no previous heading at level 5"))
-qn("heading6", key="6", nextDoc=_("moves to the next heading at level 6"), nextError=_("no next heading at level 6"),
-	prevDoc=_("moves to the previous heading at level 6"), prevError=_("no previous heading at level 6"))
-qn("table", key="t", nextDoc=_("moves to the next table"), nextError=_("no next table"),
-	prevDoc=_("moves to the previous table"), prevError=_("no previous table"), readUnit=textInfos.UNIT_LINE)
-qn("link", key="k", nextDoc=_("moves to the next link"), nextError=_("no next link"),
-	prevDoc=_("moves to the previous link"), prevError=_("no previous link"))
-qn("visitedLink", key="v", nextDoc=_("moves to the next visited link"), nextError=_("no next visited link"),
-	prevDoc=_("moves to the previous visited link"), prevError=_("no previous visited link"))
-qn("unvisitedLink", key="u", nextDoc=_("moves to the next unvisited link"), nextError=_("no next unvisited link"),
-	prevDoc=_("moves to the previous unvisited link"), prevError=_("no previous unvisited link"))
-qn("formField", key="f", nextDoc=_("moves to the next form field"), nextError=_("no next form field"),
-	prevDoc=_("moves to the previous form field"), prevError=_("no previous form field"), readUnit=textInfos.UNIT_LINE)
-qn("list", key="l", nextDoc=_("moves to the next list"), nextError=_("no next list"),
-	prevDoc=_("moves to the previous list"), prevError=_("no previous list"), readUnit=textInfos.UNIT_LINE)
-qn("listItem", key="i", nextDoc=_("moves to the next list item"), nextError=_("no next list item"),
-	prevDoc=_("moves to the previous list item"), prevError=_("no previous list item"))
-qn("button", key="b", nextDoc=_("moves to the next button"), nextError=_("no next button"),
-	prevDoc=_("moves to the previous button"), prevError=_("no previous button"))
-qn("edit", key="e", nextDoc=_("moves to the next edit field"), nextError=_("no next edit field"),
-	prevDoc=_("moves to the previous edit field"), prevError=_("no previous edit field"), readUnit=textInfos.UNIT_LINE)
-qn("frame", key="m", nextDoc=_("moves to the next frame"), nextError=_("no next frame"),
-	prevDoc=_("moves to the previous frame"), prevError=_("no previous frame"), readUnit=textInfos.UNIT_LINE)
-qn("separator", key="s", nextDoc=_("moves to the next separator"), nextError=_("no next separator"),
-	prevDoc=_("moves to the previous separator"), prevError=_("no previous separator"))
-qn("radioButton", key="r", nextDoc=_("moves to the next radio button"), nextError=_("no next radio button"),
-	prevDoc=_("moves to the previous radio button"), prevError=_("no previous radio button"))
-qn("comboBox", key="c", nextDoc=_("moves to the next combo box"), nextError=_("no next combo box"),
-	prevDoc=_("moves to the previous combo box"), prevError=_("no previous combo box"))
-qn("checkBox", key="x", nextDoc=_("moves to the next check box"), nextError=_("no next check box"),
-	prevDoc=_("moves to the previous check box"), prevError=_("no previous check box"))
-qn("graphic", key="g", nextDoc=_("moves to the next graphic"), nextError=_("no next graphic"),
-	prevDoc=_("moves to the previous graphic"), prevError=_("no previous graphic"))
-qn("blockQuote", key="q", nextDoc=_("moves to the next block quote"), nextError=_("no next block quote"),
-	prevDoc=_("moves to the previous block quote"), prevError=_("no previous block quote"))
-qn("notLinkBlock", key="n", nextDoc=_("skips forward past a block of links"), nextError=_("no more text after a block of links"),
-	prevDoc=_("skips backward past a block of links"), prevError=_("no more text before a block of links"), readUnit=textInfos.UNIT_LINE)
-qn("landmark", key="d", nextDoc=_("moves to the next landmark"), nextError=_("no next landmark"),
-	prevDoc=_("moves to the previous landmark"), prevError=_("no previous landmark"), readUnit=textInfos.UNIT_LINE)
-qn("embeddedObject", key="o", nextDoc=_("moves to the next embedded object"), nextError=_("no next embedded object"),
-	prevDoc=_("moves to the previous embedded object"), prevError=_("no previous embedded object"))
+qn("heading", key="h",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading"))
+qn("heading1", key="1",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 1"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 1"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 1"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 1"))
+qn("heading2", key="2",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 2"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 2"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 2"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 2"))
+qn("heading3", key="3",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 3"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 3"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 3"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 3"))
+qn("heading4", key="4",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 4"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 4"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 4"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 4"))
+qn("heading5", key="5",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 5"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 5"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 5"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 5"))
+qn("heading6", key="6",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next heading at level 6"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next heading at level 6"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous heading at level 6"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous heading at level 6"))
+qn("table", key="t",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next table"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next table"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous table"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous table"),
+	readUnit=textInfos.UNIT_LINE)
+qn("link", key="k",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next link"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next link"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous link"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous link"))
+qn("visitedLink", key="v",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next visited link"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next visited link"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous visited link"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous visited link"))
+qn("unvisitedLink", key="u",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next unvisited link"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next unvisited link"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous unvisited link"), 
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous unvisited link"))
+qn("formField", key="f",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next form field"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next form field"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous form field"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous form field"),
+	readUnit=textInfos.UNIT_LINE)
+qn("list", key="l",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next list"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next list"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous list"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous list"),
+	readUnit=textInfos.UNIT_LINE)
+qn("listItem", key="i",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next list item"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next list item"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous list item"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous list item"))
+qn("button", key="b",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next button"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next button"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous button"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous button"))
+qn("edit", key="e",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next edit field"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next edit field"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous edit field"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous edit field"),
+	readUnit=textInfos.UNIT_LINE)
+qn("frame", key="m",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next frame"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next frame"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous frame"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous frame"),
+	readUnit=textInfos.UNIT_LINE)
+qn("separator", key="s",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next separator"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next separator"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous separator"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous separator"))
+qn("radioButton", key="r",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next radio button"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next radio button"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous radio button"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous radio button"))
+qn("comboBox", key="c",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next combo box"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next combo box"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous combo box"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous combo box"))
+qn("checkBox", key="x",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next check box"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next check box"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous check box"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous check box"))
+qn("graphic", key="g",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next graphic"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next graphic"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous graphic"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous graphic"))
+qn("blockQuote", key="q",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next block quote"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next block quote"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous block quote"), 
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous block quote"))
+qn("notLinkBlock", key="n",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("skips forward past a block of links"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no more text after a block of links"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("skips backward past a block of links"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no more text before a block of links"),
+	readUnit=textInfos.UNIT_LINE)
+qn("landmark", key="d",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next landmark"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next landmark"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous landmark"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous landmark"),
+	readUnit=textInfos.UNIT_LINE)
+qn("embeddedObject", key="o",
+	# Translators: Input help message for a quick navigation command in browse mode.
+	nextDoc=_("moves to the next embedded object"),
+	# Translators: Message presented when the browse mode element is not found.
+	nextError=_("no next embedded object"),
+	# Translators: Input help message for a quick navigation command in browse mode.
+	prevDoc=_("moves to the previous embedded object"),
+	# Translators: Message presented when the browse mode element is not found.
+	prevError=_("no previous embedded object"))
 del qn
 
 def reportPassThrough(virtualBuffer):
@@ -1566,6 +1763,9 @@ def reportPassThrough(virtualBuffer):
 			sound = r"waves\focusMode.wav" if virtualBuffer.passThrough else r"waves\browseMode.wav"
 			nvwave.playWaveFile(sound)
 		else:
-			speech.speakMessage(_("focus mode") if virtualBuffer.passThrough else _("browse mode"))
+			if virtualBuffer.passThrough:
+				speech.speakMessage(_("focus mode"))
+			else:
+				speech.speakMessage(_("browse mode"))
 		reportPassThrough.last = virtualBuffer.passThrough
 reportPassThrough.last = False

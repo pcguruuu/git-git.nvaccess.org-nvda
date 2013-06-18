@@ -76,7 +76,7 @@ confspec = ConfigObj(StringIO(
 	inputTable = string(default=en-us-comp8.ctb)
 	expandAtCursor = boolean(default=true)
 	cursorBlinkRate = integer(default=500,min=0,max=2000)
-	messageTimeout = integer(default=4,min=1,max=20)
+	messageTimeout = integer(default=4,min=0,max=20)
 	tetherTo = string(default="focus")
 	readByParagraph = boolean(default=false)
 	wordWrap = boolean(default=true)
@@ -182,6 +182,9 @@ confspec = ConfigObj(StringIO(
 	alwaysIncludeShortCharacterDescriptionInCandidateName = boolean(default=True)
 	reportReadingStringChanges = boolean(default=True)
 	reportCompositionStringChanges = boolean(default=True)
+
+[upgrade]
+	newLaptopKeyboardLayout = boolean(default=false)
 """
 ), list_values=False, encoding="UTF-8")
 confspec.newlines = "\r\n"
@@ -389,7 +392,7 @@ def setSystemConfigToCurrentConfig():
 
 def _setSystemConfig(fromPath):
 	import installer
-	toPath=os.path.join(sys.prefix,'systemConfig')
+	toPath=os.path.join(sys.prefix.decode('mbcs'),'systemConfig')
 	if os.path.isdir(toPath):
 		installer.tryRemoveFile(toPath)
 	for curSourceDir,subDirs,files in os.walk(fromPath):

@@ -1,9 +1,11 @@
+# -*- coding: UTF-8 -*-
 #synthDrivers/espeak.py
 #A part of NonVisual Desktop Access (NVDA)
-#Copyright (C) 2006-2009 NVDA Contributors <http://www.nvda-project.org/>
+#Copyright (C) 2007-2013 NV Access Limited, Peter Vágner
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
 
+import os
 from collections import OrderedDict
 import _espeak
 import Queue
@@ -62,7 +64,7 @@ class SynthDriver(SynthDriver):
 			elif isinstance(item,speech.IndexCommand):
 				textList.append("<mark name=\"%d\" />"%item.index)
 			elif isinstance(item,speech.CharacterModeCommand):
-				textList.append("<say-as type=\"spell-out\">" if item.state else "</say-as>")
+				textList.append("<say-as interpret-as=\"characters\">" if item.state else "</say-as>")
 			elif isinstance(item,speech.LangChangeCommand):
 				if langChanged:
 					textList.append("</voice>")
@@ -134,7 +136,8 @@ class SynthDriver(SynthDriver):
 		voices=OrderedDict()
 		for v in _espeak.getVoiceList():
 			l=v.languages[1:]
-			voices[v.identifier]=VoiceInfo(v.identifier,v.name,l)
+			identifier=os.path.basename(v.identifier)
+			voices[identifier]=VoiceInfo(identifier,v.name,l)
 		return voices
 
 	def _get_voice(self):
@@ -148,8 +151,14 @@ class SynthDriver(SynthDriver):
 	def _set_voice(self, identifier):
 		if not identifier:
 			return
+		if "\\" in identifier:
+			identifier=os.path.basename(identifier)
 		self._voice=identifier
-		_espeak.setVoiceAndVariant(voice=identifier,variant=self._variant)
+		try:
+			_espeak.setVoiceAndVariant(voice=identifier,variant=self._variant)
+		except:
+			self._voice=None
+			raise
 		self._language=super(SynthDriver,self).language
 
 	def _get_lastIndex(self):

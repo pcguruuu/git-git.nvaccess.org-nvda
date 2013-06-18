@@ -3,31 +3,100 @@
 
 %!includeconf: ../changes.t2tconf
 
+= 2013.2 =
+
+== New Features ==
+- Support for the Chromium Embedded Framework, which is a web browser control used in several applications. (#3108)
+- New eSpeak voice variant: Iven3.
+- In Skype, new chat messages are reported automatically while the conversation is focused. (#2298)
+- Support for Tween, including reporting of tab names and less verbosity when reading tweets.
+- You can now disable displaying of NVDA messages on a braille display by setting the message timeout to 0 in the Braille Settings dialog. (#2482)
+- In the Add-ons Manager, there is now a Get Add-ons button to open the NVDA Add-ons web site where you can browse and download availible add-ons. (#3209)
+- In the NVDA Welcome dialog which always appears the first time you run NVDA, you can now specify whether NVDA starts automatically after you log on to Windows. (#2234)
+- Sleep mode is automatically enabled when using Dolphin Cicero. (#2055)
+
+
+== Changes ==
+- Performing a single finger flick left or right when in object mode now moves previous or next through a flattened view of the object navigation hyrarchi. Use 2-finger flick left and right to perform the original previous/next object limited to the current hyrarchical level.
+
+
+== Bug Fixes ==
+- Activating an object now announces the action before the activation, rather than the action after the activation (e.g. expand when expanding rather than collapse). (#2982)
+- More accurate reading and cursor tracking in  various input fields for recent versions of Skype, such as chat and search fields. (#1601, #3036)
+- In the Skype recent conversations list, the number of new events is now read for each conversation if relevant. (#1446)
+- Improvements to cursor tracking and reading order for right-to-left text from the screen. E.g. Editing Arabic text in  Microsoft Excel. (#1601) 
+- quick navigation to buttons and form fields will now locate links marked as buttons for accessibility purposes in Internet Explorer. (#2750)
+- In browse mode, the content inside tree views is no longer rendered, as a flattened representation isn't useful. You can press enter on a tree view to interact with it in focus mode. (#3023)
+- Pressing alt+downArrow or alt+upArrow to expand a combo box while in focus mode no longer incorrectly switches to browse mode. (#2340)
+- in Internet Explorer 10, table cells no longer activate focus mode, unless they have been explicitly made focusable by the web author (#3248)
+- NVDA no longer fails to start if the system time is earlier than the last check for an update. (#3260)
+- If a progress bar is shown on a braille display, the braille display is updated when the progress bar changes. (#3258)
+- In browse mode in Mozilla applications, table captions are no longer rendered twice. In addition, the summary is rendered when there is also a caption. (#3196)
+- When changing input languages in Windows 8, NVDA now speaks the correct language rather than the one previous.
+- NVDA now announces IME conversion mode changes in Windows 8.
+- NVDA no longer announces garbage on the Desktop when the Google Japanese or Atok IME input methods are in use. (#3234)
+- In Windows 7 and above, NVDA no longer inappropriately announces speech recognition or touch input as a keyboard language change.
+ 
+
+== Changes for Developers ==
+- windowUtils.findDescendantWindow has been added to search for a descendant window (HWND) matching the specified visibility, control ID and/or class name.
+- The remote Python console no longer times out after 10 seconds while waiting for input. (#3126)
+
+
+= 2013.1.1 =
+
+== Bug Fixes ==
+- Correct characters are produced when typing in NVDA's own user interface while using a Korean or Japanese input method while it is the default method. (#2909)
+- In Internet Explorer and other MSHTML controls, fields marked as containing an invalid entry are now handled correctly. (#3256)
+
+
 = 2013.1 =
+Highlights of this release include a more intuitive and consistent laptop keyboard layout; basic support for Microsoft PowerPoint; support for long descriptions in web browsers; and support for input of computer braille for braille displays which have a braille keyboard.
+
+== Important ==
+
+=== New Laptop Keyboard Layout ===
+The laptop keyboard layout has been completely redesigned in order to make it more intuitive and consistent.
+The new layout uses the arrow keys in combination with the NVDA key and other modifiers for review commands.
+
+Please note the following changes to commonly used commands:
+|| Name | Key |
+| Say all | NVDA+a |
+| Read current line | NVDA+l |
+| Read current text selection | NVDA+shift+s |
+| Report status bar | NVDA+shift+end |
+In addition, among other changes, all of the object navigation, text review, mouse click and synth settings ring commands have changed.
+Please see the [Commands Quick Reference keyCommands.html] document for the new keys.
+
 
 == New Features ==
 - Basic support for editing and reading Microsoft PowerPoint presentations. (#501)
 - Basic support for reading and writing messages in Lotus Notes 8.5. (#543)
+- Support for automatic language switching when reading documents in Microsoft Word. (#2047) 
 - In Browse mode for MSHTML (e.g. Internet Explorer) and Gecko (e.g. Firefox), the existance of long descriptions are now announced. It's also possible to open the long description in a new window by pressing NVDA+d. (#809)
 - Notifications in Internet Explorer 9 and above are now spoken (such as content blocking or file downloads). (#2343)
 - Automatic reporting of table row and column headers is now supported for browse mode documents in Internet Explorer and other MSHTML controls. (#778)
-- New language: Aragonese
+- New language: Aragonese, Irish
 - New braille translation tables: Danish grade 2, Korean grade 1. (#2737)
 - Support for braille displays connected via bluetooth on a computer running the Bluetooth Stack for Windows by Toshiba. (#2419)
-- Support for port selection when using freedom Scientific displays (Automatic, USB or Bluetooth).
-- Support for the BrailleNote family of notetakers from Humanware when acting as a braille terminal for a screen reader. (#2012)
+- Support for port selection when using Freedom Scientific displays (Automatic, USB or Bluetooth).
+- Support for the BrailleNote family of notetakers from HumanWare when acting as a braille terminal for a screen reader. (#2012)
 - Support for older models of Papenmeier BRAILLEX braille displays. (#2679)
 - Support for input of computer braille for braille displays which have a braille keyboard. (#808)
-- New keyboard settings that allow  the choice for whether NVDA should interrupt speech for typed characters and or the Enter key. (#698)
+- New keyboard settings that allow  the choice for whether NVDA should interrupt speech for typed characters and/or the Enter key. (#698)
+- Support for several browsers based on Google Chrome: Rockmelt, BlackHawk, Comodo Dragon and SRWare Iron. (#2236, #2813, #2814, #2815)
 
 
 == Changes ==
 - Updated liblouis braille translator to 2.5.2. (#2737)
+- The laptop keyboard layout has been completely redesigned in order to make it more intuitive and consistent. (#804)
+- Updated eSpeak speech synthesizer to 1.47.11. (#2680, #3124, #3132, #3141, #3143, #3172)
 
 
 == Bug Fixes ==
 - The quick navigation keys for jumping to the next or previous separator in Browse Mode now work in Internet Explorer and other MSHTML controls. (#2781)
-- If NVDA falls back to eSpeak or  no speech due to a configured speech synthesizer failing when NVDA starts, the configuration is no longer updated to set the fallback synthesizer as the configured choice, meaning that now the original synthesizer will be tried again next time NVDA starts. (#2589)
+- If NVDA falls back to eSpeak or no speech due to the configured speech synthesizer failing when NVDA starts, the configured choice is no longer automatically set to the fallback synthesizer. This means that now, the original synthesizer will be tried again next time NVDA starts. (#2589)
+- If NVDA falls back to no braille due to the configured braille display failing when NVDA starts, the configured display is no longer automatically set to no braille. This means that now, the original display will be tried again next time NVDA starts. (#2264)
 - In browse mode in Mozilla applications, updates to tables are now rendered correctly. For example, in updated cells, row and column coordinates are reported and table navigation works as it should. (#2784)
 - In browse mode in web browsers, certain clickable unlabelled graphics which weren't previously rendered are now rendered correctly. (#2838)
 - Earlier and newer versions of SecureCRT are now supported. (#2800)
@@ -48,6 +117,18 @@
 - It is again possible to select text in a backward direction in Microsoft Word while Braille is enabled.
 - When reviewing,  backspacing or deleting characters  In Scintilla edit controls, NVDA correctly announces multibyte characters. (#2855)
 - NVDA will no longer fail to install when the user's profile path contains certain multibyte characters. (#2729)
+- Reporting of groups for List View controls (SysListview32) in 64-bit applications no longer causes an error.
+- In browse mode in Mozilla applications, text content is no longer incorrectly treated as editable in some rare cases. (#2959)
+- In IBM Lotus Symphony and OpenOffice, moving the caret now moves the review cursor if appropriate.
+- Adobe Flash content is now accessible in Internet Explorer in Windows 8. (#2454)
+- Fixed Bluetooth support for Papenmeier Braillex Trio. (#2995)
+- Fixed inability to use certain Microsoft Speech API version 5 voices such as Koba Speech 2 voices. (#2629)
+- In applications using the Java Access Bridge, braille displays are now updated correctly when the caret moves in editable text fields . (#3107)
+- Support the form landmark in browse mode documents that support landmarks. (#2997) 
+- The eSpeak synthesizer driver now handles reading by character more appropriately (e.g. announcing a foreign letter's name or value rather than just its sound or generic name). (#3106)
+- NVDA no longer fails to copy user settings for use on logon and other secure screens when the user's profile path contains non-ASCII characters. (#3092)
+- NVDA no longer freezes when using Asian character input in some .NET applications. (#3005)
+- it is now possible to use browse mode for pages in Internet Explorer 10 when in standards mode; e.g. www.gmail.com login page. (#3151)
 
 
 == Changes for Developers ==
@@ -57,6 +138,7 @@
 - Braille input from braille keyboards is now supported. (#808)
  - Braille input is encompassed by the brailleInput.BrailleInputGesture class or a subclass thereof.
  - Subclasses of braille.BrailleDisplayGesture (as implemented in braille display drivers) can also inherit from brailleInput.BrailleInputGesture. This allows display commands and braille input to be handled by the same gesture class.
+- You can now use comHelper.getActiveObject to get an active COM object from a normal process when NVDA is running with the UIAccess privilege. (#2483)
 
 
 = 2012.3 =

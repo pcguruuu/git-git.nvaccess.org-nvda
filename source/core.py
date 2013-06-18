@@ -38,6 +38,9 @@ def doStartupDialogs():
 		gui.messageBox(_("Your gesture map file contains errors.\n"
 				"More details about the errors can be found in the log file."),
 			_("gesture map File Error"), wx.OK|wx.ICON_EXCLAMATION)
+	if not config.conf["upgrade"]["newLaptopKeyboardLayout"]:
+		from gui import upgradeAlerts
+		upgradeAlerts.NewLaptopKeyboardLayout.run()
 
 def restart():
 	"""Restarts NVDA by starting a new copy with -r."""
@@ -153,6 +156,7 @@ This initializes all modules such as audio, IAccessible, keyboard, mouse, and GU
 	speech.initialize()
 	if not globalVars.appArgs.minimal and (time.time()-globalVars.startTime)>5:
 		log.debugWarning("Slow starting core (%.2f sec)" % (time.time()-globalVars.startTime))
+		# Translators: This is spoken when NVDA is starting.
 		speech.speakMessage(_("Loading NVDA. Please wait..."))
 	import wx
 	log.info("Using wx version %s"%wx.version())
@@ -253,6 +257,7 @@ This initializes all modules such as audio, IAccessible, keyboard, mouse, and GU
 		wx.CallAfter(gui.installerGui.doSilentInstall)
 	elif not globalVars.appArgs.minimal:
 		try:
+			# Translators: This is shown on a braille display (if one is connected) when NVDA starts.
 			braille.handler.message(_("NVDA started"))
 		except:
 			log.error("", exc_info=True)
@@ -303,94 +308,54 @@ This initializes all modules such as audio, IAccessible, keyboard, mouse, and GU
 
 	log.info("Exiting")
 	if updateCheck:
-		log.debug("Terminating updateCheck")
-		updateCheck.terminate()
-	log.debug("Terminating watchdog")
-	watchdog.terminate()
-	log.debug("Terminating global plugin handler")
-	globalPluginHandler.terminate()
-	log.debug("Terminating GUI")
-	gui.terminate()
+		_terminate(updateCheck)
+
+	_terminate(watchdog)
+	_terminate(globalPluginHandler, name="global plugin handler")
+	_terminate(gui)
 	config.saveOnExit()
+
 	try:
 		if globalVars.focusObject and hasattr(globalVars.focusObject,"event_loseFocus"):
 			log.debug("calling lose focus on object with focus")
 			globalVars.focusObject.event_loseFocus()
 	except:
-		log.error("Lose focus error",exc_info=True)
+		log.exception("Lose focus error")
 	try:
 		speech.cancelSpeech()
 	except:
 		pass
-	log.debug("Cleaning up running treeInterceptors")
-	try:
-		import treeInterceptorHandler
-		treeInterceptorHandler.terminate()
-	except:
-		log.error("Error cleaning up treeInterceptors",exc_info=True)
-	log.debug("Terminating IAccessible support")
-	try:
-		IAccessibleHandler.terminate()
-	except:
-		log.error("Error terminating IAccessible support",exc_info=True)
-	log.debug("Terminating UIA support")
-	try:
-		UIAHandler.terminate()
-	except:
-		log.error("Error terminating UIA support",exc_info=True)
-	log.debug("Terminating winConsole support")
-	try:
-		winConsoleHandler.terminate()
-	except:
-		log.error("Error terminating winConsole support",exc_info=True)
-	log.debug("Terminating Java Access Bridge support")
-	try:
-		JABHandler.terminate()
-	except:
-		log.error("Error terminating Java Access Bridge support",exc_info=True)
-	log.debug("Terminating app module handler")
-	appModuleHandler.terminate()
-	log.debug("Terminating NVDAHelper")
-	try:
-		NVDAHelper.terminate()
-	except:
-		log.error("Error terminating NVDAHelper",exc_info=True)
-	log.debug("Terminating touchHandler")
-	try:
-		touchHandler.terminate()
-	except:
-		log.error("Error terminating touchHandler")
-	log.debug("Terminating keyboard handler")
-	try:
-		keyboardHandler.terminate()
-	except:
-		log.error("Error terminating keyboard handler")
-	log.debug("Terminating mouse handler")
-	try:
-		mouseHandler.terminate()
-	except:
-		log.error("error terminating mouse handler",exc_info=True)
-	log.debug("Terminating input core")
-	inputCore.terminate()
-	log.debug("Terminating brailleInput")
-	brailleInput.terminate()
-	log.debug("Terminating braille")
-	try:
-		braille.terminate()
-	except:
-		log.error("Error terminating braille",exc_info=True)
-	log.debug("Terminating speech")
-	try:
-		speech.terminate()
-	except:
-		log.error("Error terminating speech",exc_info=True)
-	try:
-		addonHandler.terminate()
-	except:
-		log.error("Error terminating addonHandler",exc_info=True)
+
+	import treeInterceptorHandler
+	_terminate(treeInterceptorHandler)
+	_terminate(IAccessibleHandler, name="IAccessible support")
+	_terminate(UIAHandler, name="UIA support")
+	_terminate(winConsoleHandler, name="winConsole support")
+	_terminate(JABHandler, name="Java Access Bridge support")
+	_terminate(appModuleHandler, name="app module handler")
+	_terminate(NVDAHelper)
+	_terminate(touchHandler)
+	_terminate(keyboardHandler, name="keyboard handler")
+	_terminate(mouseHandler)
+	_terminate(inputCore)
+	_terminate(brailleInput)
+	_terminate(braille)
+	_terminate(speech)
+	_terminate(addonHandler)
+
 	if not globalVars.appArgs.minimal:
 		try:
 			nvwave.playWaveFile("waves\\exit.wav",async=False)
 		except:
 			pass
 	log.debug("core done")
+
+def _terminate(module, name=None):
+	if name is None:
+		name = module.__name__
+	log.debug("Terminating %s" % name)
+	try:
+		module.terminate()
+	except:
+		log.exception("Error terminating %s" % name)
+

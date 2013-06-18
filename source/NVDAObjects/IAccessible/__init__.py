@@ -172,7 +172,7 @@ class IA2TextTextInfo(textInfos.offsets.OffsetsTextInfo):
 		return [min(start,end),max(start,end)]
 
 	def _setSelectionOffsets(self,start,end):
-		for selIndex in range(self.obj.IAccessibleTextObject.NSelections):
+		for selIndex in xrange(self.obj.IAccessibleTextObject.NSelections):
 			self.obj.IAccessibleTextObject.RemoveSelection(selIndex)
 		self.obj.IAccessibleTextObject.AddSelection(start,end)
 
@@ -282,8 +282,10 @@ class IA2TextTextInfo(textInfos.offsets.OffsetsTextInfo):
 		# Mozilla uses IAccessibleHypertext to facilitate quick retrieval of embedded objects.
 		try:
 			ht = self.obj.IAccessibleTextObject.QueryInterface(IAccessibleHandler.IAccessibleHypertext)
-			hl = ht.hyperlink(ht.hyperlinkIndex(offset))
-			return IAccessible(IAccessibleObject=hl.QueryInterface(IAccessibleHandler.IAccessible2), IAccessibleChildID=0)
+			hi = ht.hyperlinkIndex(offset)
+			if hi != -1:
+				hl = ht.hyperlink(hi)
+				return IAccessible(IAccessibleObject=hl.QueryInterface(IAccessibleHandler.IAccessible2), IAccessibleChildID=0)
 		except COMError:
 			pass
 
@@ -291,6 +293,8 @@ class IA2TextTextInfo(textInfos.offsets.OffsetsTextInfo):
 		# This could possibly be optimised by caching.
 		text = self._getTextRange(0, offset + 1)
 		childIndex = text.count(u"\uFFFC")
+		if childIndex == 0:
+			raise LookupError
 		try:
 			return IAccessible(IAccessibleObject=IAccessibleHandler.accChild(self.obj.IAccessibleObject, childIndex)[0], IAccessibleChildID=0)
 		except COMError:
@@ -464,6 +468,10 @@ the NVDAObject for IAccessible
 		elif windowClassName == "WebViewWindowClass":
 			from . import webKit
 			webKit.findExtraOverlayClasses(self, clsList)
+		elif windowClassName.startswith("Chrome_"):
+			from . import chromium
+			chromium.findExtraOverlayClasses(self, clsList)
+
 
 		#Support for Windowless richEdit
 		if not hasattr(IAccessible,"IID_ITextServices"):

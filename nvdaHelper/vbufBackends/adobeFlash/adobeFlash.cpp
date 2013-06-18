@@ -189,8 +189,10 @@ void AdobeFlashVBufBackend_t::render(VBufStorage_buffer_t* buffer, int docHandle
 		WCHAR* wclass = (WCHAR*)malloc(sizeof(WCHAR) * 256);
 		if (!wclass)
 			return;
-		if (GetClassName((HWND)docHandle, wclass, 256) == 0)
+		if (GetClassName((HWND)docHandle, wclass, 256) == 0) {
+			free(wclass);
 			return;
+		}
 		this->isWindowless = wcscmp(wclass, L"Internet Explorer_Server") == 0;
 		free(wclass);
 	}
@@ -238,11 +240,11 @@ void AdobeFlashVBufBackend_t::render(VBufStorage_buffer_t* buffer, int docHandle
 		if (this->getAccId(pacc) != -1) {
 			// We can get IDs from accessibles.
 			VARIANT* varChildren;
-			if(!(varChildren=(VARIANT*)malloc(sizeof(VARIANT)*childCount)))
+			if (!(varChildren = (VARIANT*)malloc(sizeof(VARIANT) * childCount)))
 				return;
-			if(AccessibleChildren(pacc,0,childCount,varChildren,&childCount)!=S_OK)
-				childCount=0;
-			for(long i=0;i<childCount;++i) {
+			if (FAILED(AccessibleChildren(pacc, 0, childCount, varChildren, &childCount)))
+				childCount = 0;
+			for (long i = 0; i < childCount; ++i) {
 				if (varChildren[i].vt != VT_DISPATCH || !varChildren[i].pdispVal) {
 					VariantClear(&(varChildren[i]));
 					continue;

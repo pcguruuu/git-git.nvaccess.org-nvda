@@ -2,14 +2,15 @@
 #A part of NonVisual Desktop Access (NVDA)
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
-#Copyright (C) 2012 NV Access Limited
+#Copyright (C) 2012-2013 NV Access Limited, Beqa Gozalishvili
 
+import os
 import wx
 import core
+import languageHandler
 import gui
 from logHandler import log
 import addonHandler
-
 
 class AddonsDialog(wx.Dialog):
 	_instance = None
@@ -29,25 +30,38 @@ class AddonsDialog(wx.Dialog):
 		entriesLabel=wx.StaticText(self,-1,label=_("Installed Add-ons"))
 		entriesSizer.Add(entriesLabel)
 		self.addonsList=wx.ListCtrl(self,-1,style=wx.LC_REPORT|wx.LC_SINGLE_SEL,size=(550,350))
+		# Translators: The label for a column in add-ons list used to identify add-on package name (example: package is OCR).
 		self.addonsList.InsertColumn(0,_("Package"),width=150)
+		# Translators: The label for a column in add-ons list used to identify add-on's running status (example: status is running).
 		self.addonsList.InsertColumn(1,_("Status"),width=50)
+		# Translators: The label for a column in add-ons list used to identify add-on's version (example: version is 0.3).
 		self.addonsList.InsertColumn(2,_("Version"),width=50)
+		# Translators: The label for a column in add-ons list used to identify add-on's author (example: author is NV Access).
 		self.addonsList.InsertColumn(3,_("Author"),width=300)
 		self.addonsList.Bind(wx.EVT_LIST_ITEM_FOCUSED, self.onListItemSelected)
 		entriesSizer.Add(self.addonsList,proportion=8)
 		settingsSizer.Add(entriesSizer)
 		entryButtonsSizer=wx.BoxSizer(wx.HORIZONTAL)
+		# Translators: The label for a button in Add-ons Manager dialog to show information about the selected add-on.
 		self.aboutButton=wx.Button(self,label=_("&About add-on..."))
 		self.aboutButton.Disable()
 		self.aboutButton.Bind(wx.EVT_BUTTON,self.onAbout)
 		entryButtonsSizer.Add(self.aboutButton)
+		# Translators: The label for a button in Add-ons Manager dialog to install an add-on.
 		self.addButton=wx.Button(self,label=_("&Install..."))
 		self.addButton.Bind(wx.EVT_BUTTON,self.OnAddClick)
 		entryButtonsSizer.Add(self.addButton)
+		# Translators: The label for a button to remove either:
+		# Remove the selected add-on in Add-ons Manager dialog.
+		# Remove a speech dictionary entry.
 		self.removeButton=wx.Button(self,label=_("&Remove"))
 		self.removeButton.Disable()
 		self.removeButton.Bind(wx.EVT_BUTTON,self.OnRemoveClick)
 		entryButtonsSizer.Add(self.removeButton)
+		# Translators: The label of a button in Add-ons Manager to open the Add-ons website and get more add-ons.
+		self.getAddonsButton=wx.Button(self,label=_("&Get add-ons..."))
+		self.getAddonsButton.Bind(wx.EVT_BUTTON,self.OnGetAddonsClick)
+		entryButtonsSizer.Add(self.getAddonsButton)
 		settingsSizer.Add(entryButtonsSizer)
 		mainSizer.Add(settingsSizer,border=20,flag=wx.LEFT|wx.RIGHT|wx.TOP)
 		# Translators: The label of a button to close the Addons dialog.
@@ -204,6 +218,10 @@ Description: {description}
 		# Translators: title for the Addon Information dialog
 		title=_("Add-on Information")
 		gui.messageBox(message, title, wx.OK)
+
+	def OnGetAddonsClick(self,evt):
+		ADDONS_URL = "http://addons.nvda-project.org/index.{lang}.html"
+		os.startfile(ADDONS_URL.format(lang=languageHandler.getLanguage()))
 
 	def __del__(self):
 		AddonsDialog._instance = None

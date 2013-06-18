@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: NVDA bzr main:5788\n"
+"Project-Id-Version: NVDA bzr main:5884\n"
 "Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
-"POT-Creation-Date: 2013-01-31 05:30+0000\n"
-"PO-Revision-Date: 2013-01-30 21:42-0800\n"
+"POT-Creation-Date: 2013-02-14 05:30+0000\n"
+"PO-Revision-Date: 2013-03-23 02:12-0800\n"
 "Last-Translator: Joseph Lee <joseph.lee22590@gmail.com>\n"
 "Language-Team: NVDA Korean users and translations forum <joseph."
 "lee22590@gmail.com, nvda-korean@freelists.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: globalCommands.py:880
 #, python-format
@@ -47,7 +47,7 @@ msgstr "%s 커서"
 
 #. Translators: Displayed in braille at the end of a control field such as a list or table.
 #. %s is replaced with the control's role.
-#: braille.py:575
+#: braille.py:578
 #, python-format
 msgid "%s end"
 msgstr "%s 끝"
@@ -565,7 +565,7 @@ msgstr "저자"
 #. : Automatic port constant to be used by braille displays that support the "automatic" port
 #. : @type: Tupple
 #. Translators String representing the automatic port selection for braille displays.
-#: braille.py:1515
+#: braille.py:1536
 msgid "Automatic"
 msgstr "자동 연결"
 
@@ -622,7 +622,7 @@ msgstr "가능하면 단어 끊지않고 출력 (&W)"
 
 #: gui/__init__.py:289
 msgid "B&raille settings..."
-msgstr "점자 출력 설정 (&R)..."
+msgstr "점자 설정 (&R)..."
 
 #. Translators: This is presented in outlook or live mail, email blind carbon copy
 #: appModules/msimn.py:45
@@ -648,7 +648,7 @@ msgid "Beep if typing lowercase letters when caps lock is on"
 msgstr "caps럭이 켜져 있을때 소문자 입력시 경고음 출력"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:109
+#: appModules/powerpnt.py:111
 msgid "Bitmap placeholder"
 msgstr "Bitmap placeholder"
 
@@ -663,7 +663,7 @@ msgstr "점자 출력 오류"
 #. Translators: This is the label for the braille settings dialog.
 #: gui/settingsDialogs.py:1221
 msgid "Braille Settings"
-msgstr "점자 출력 설정"
+msgstr "점자 설정"
 
 #: globalCommands.py:945
 #, python-format
@@ -725,7 +725,7 @@ msgid "Case &sensitive"
 msgstr "대소문자 구별 (&S)"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:97
+#: appModules/powerpnt.py:99
 msgid "Center Title placeholder"
 msgstr "Center Title placeholder"
 
@@ -754,7 +754,7 @@ msgid "Change virtual buffers specific settings"
 msgstr "가상 버퍼 출력에 대한 세부사항을 설정합니다. "
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:107
+#: appModules/powerpnt.py:109
 msgid "Chart placeholder"
 msgstr "Chart placeholder"
 
@@ -1004,7 +1004,7 @@ msgid "Danish grade 2"
 msgstr "뎀마크어 2종"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:123
+#: appModules/powerpnt.py:125
 msgid "Date placeholder"
 msgstr "Date placeholder"
 
@@ -1106,6 +1106,11 @@ msgstr "발음 사전 항목 변경"
 #: virtualBuffers/__init__.py:288
 msgid "Elements List"
 msgstr "구성요소 목록"
+
+#. Translators: The message for an empty slide in a slide show
+#: appModules/powerpnt.py:809 appModules/powerpnt.py:810
+msgid "Empty slide"
+msgstr "슬라이드 없음"
 
 #: scriptHandler.py:33
 #, python-format
@@ -1311,7 +1316,7 @@ msgid "Follow system &focus"
 msgstr "시스템 포커스 따라가기 (&F)"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:121
+#: appModules/powerpnt.py:123
 msgid "Footer placeholder"
 msgstr "Footer placeholder"
 
@@ -1439,7 +1444,7 @@ msgid "Half shaped mode"
 msgstr "반값 모드"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:158
+#: appModules/powerpnt.py:160
 msgid "Handout Master view"
 msgstr "Handout Master view"
 
@@ -1449,7 +1454,7 @@ msgid "Handy Tech braille displays"
 msgstr "Handy Tech 점자 디스플레이"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:119
+#: appModules/powerpnt.py:121
 msgid "Header placeholder"
 msgstr "Header placeholder"
 
@@ -1524,6 +1529,19 @@ msgid ""
 "If pressed once, reports the current time. If pressed twice, reports the "
 "current date"
 msgstr "한번 누르면 현재 시각을, 두번 누르면 현재 날짜를 알려줍니다. "
+
+#. Translators: Information about NVDA's new laptop keyboard layout.
+#: gui/upgradeAlerts.py:18
+msgid ""
+"In NVDA 2013.1, the laptop keyboard layout has been completely redesigned in "
+"order to make it more intuitive and consistent.\n"
+"If you use the laptop layout, please see the What's New document for more "
+"information."
+msgstr ""
+"NvDA 2013.1에서는 사용자 편의를 위해 랩탑 키보드 레이아웃의 여러 명령이 변경"
+"되었습니다.\n"
+"만약 랩탑 키보드 레이아웃을 사용하신다면 변경된 사항 문서를 참조하시기 바랍니"
+"다."
 
 #: globalCommands.py:149
 msgid "Increases the currently active setting in the synth settings ring"
@@ -1653,7 +1671,7 @@ msgstr "사용 약관 동의서"
 msgid "Lin&ks"
 msgstr "링크 (&K)"
 
-#: core.py:156
+#: core.py:159
 msgid "Loading NVDA. Please wait..."
 msgstr "NVDA 실행 준비중, 잠시만 기다려 주십시요"
 
@@ -1702,12 +1720,12 @@ msgid ""
 msgstr "현재 리뷰커서 위치를 클립보드에 복사할 텍스트의 시작으로 표시합니다. "
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:174
+#: appModules/powerpnt.py:176
 msgid "Master Thumbnails"
 msgstr "Master Thumbnails"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:111
+#: appModules/powerpnt.py:113
 msgid "Media Clip placeholder"
 msgstr "Media Clip placeholder"
 
@@ -1746,7 +1764,7 @@ msgstr ""
 #. Translators: Description for the Move past end of container command in browse mode.
 #: virtualBuffers/__init__.py:1469
 msgid "Moves past the end  of the container element, such as a list or table"
-msgstr "케럿이 위치한 상위 요소(목록, 표 등등)의 맨 끝으로 이동합니다. "
+msgstr "케럿이 위치한 컨테이너 요소(목록, 표 등)의 맨 끝으로 이동합니다. "
 
 #: globalCommands.py:1007
 msgid "Moves the braille display to the next line"
@@ -1889,7 +1907,7 @@ msgstr "음성엔진 설정값들 중에서 이전 사용가능한 설정값으�
 #. Translators: Description for the Move to start of container command in browse mode.
 #: virtualBuffers/__init__.py:1451
 msgid "Moves to the start of the container element, such as a list or table"
-msgstr "케럿이 위치한 상위 요소(목록, 표 등등)의 맨 앞으로 이동합니다. "
+msgstr "케럿이 위치한 컨테이너 요소(목록, 표 등)의 맨 앞으로 이동합니다. "
 
 #. Translators: the label for the NVDA add-on package file type in the Choose add-on dialog.
 #: gui/addonGui.py:68
@@ -1922,7 +1940,7 @@ msgstr "NVDA 추가 기능 페키지"
 msgid "NVDA is unable to remove or overwrite a file."
 msgstr "파일을 삭제하거나 덮어 싀울 수 없습니다"
 
-#: core.py:256
+#: core.py:259
 msgid "NVDA started"
 msgstr "NVDA 시작"
 
@@ -1946,6 +1964,11 @@ msgstr "한글"
 msgctxt "languageName"
 msgid "Nepali"
 msgstr "네팔어"
+
+#. Translators: The title of a dialog providing information about NVDA's new laptop keyboard layout.
+#: gui/upgradeAlerts.py:24
+msgid "New Laptop Keyboard layout"
+msgstr "새 laptop 키보드 레이아웃"
 
 #. Translators: This is presented in outlook or live mail when sending an email to a newsgroup
 #: appModules/msimn.py:25
@@ -2012,6 +2035,11 @@ msgstr "메시지 없음"
 msgid "No next"
 msgstr "다음 화면 객체 없음"
 
+#. Translators: The message for no notes  for a slide in a slide show
+#: appModules/powerpnt.py:806
+msgid "No notes"
+msgstr "노트 없음"
+
 #: globalCommands.py:281
 msgid "No object at flat review position"
 msgstr "고정 리뷰 위치에 객체 없음"
@@ -2062,7 +2090,7 @@ msgid "NonVisual Desktop Access"
 msgstr "NonVisual Desktop Access"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:168
+#: appModules/powerpnt.py:170
 msgid "Normal view"
 msgstr "Normal view"
 
@@ -2100,7 +2128,7 @@ msgstr "노르웨이어 3종"
 #. But there is no container.
 #: virtualBuffers/__init__.py:1444 virtualBuffers/__init__.py:1458
 msgid "Not in a container"
-msgstr "상위 요소 아님"
+msgstr "컨테이너 요소 아님"
 
 #. Translators: The message reported when a user attempts to use a table movement command
 #. when the cursor is not withnin a table.
@@ -2115,12 +2143,12 @@ msgid "Not in table"
 msgstr "테이블 아님"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:160
+#: appModules/powerpnt.py:162
 msgid "Notes Master view"
 msgstr "Notes Master view"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:156
+#: appModules/powerpnt.py:158
 msgid "Notes page"
 msgstr "Notes page"
 
@@ -2141,7 +2169,7 @@ msgstr ""
 "퍼센트"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:105
+#: appModules/powerpnt.py:107
 msgid "Object placeholder"
 msgstr "Object placeholder"
 
@@ -2150,7 +2178,7 @@ msgid "Options"
 msgstr "옵션"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:113
+#: appModules/powerpnt.py:115
 msgid "Org Chart placeholder"
 msgstr "Org Chart placeholder"
 
@@ -2160,7 +2188,7 @@ msgid "Organisation:"
 msgstr "Organisation:"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:162
+#: appModules/powerpnt.py:164
 msgid "Outline view"
 msgstr "Outline view"
 
@@ -2202,7 +2230,7 @@ msgstr ""
 "을 누르게 됩니다.)"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:127
+#: appModules/powerpnt.py:129
 msgid "Picture placeholder"
 msgstr "Picture placeholder"
 
@@ -2342,7 +2370,7 @@ msgid "Primary header"
 msgstr "Primary header"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:170
+#: appModules/powerpnt.py:172
 msgid "Print Preview"
 msgstr "Print Preview"
 
@@ -2377,6 +2405,12 @@ msgstr "NVDA를 종료합니다!"
 #: synthDrivers/espeak.py:26
 msgid "Rate boos&t"
 msgstr "음성 속도 부스트 (&T)"
+
+#. Translators: The label of a button in the New Laptop Keyboard Layout dialog
+#. to open the What's New document.
+#: gui/upgradeAlerts.py:30
+msgid "Read What's New"
+msgstr "변경된 사항 읽기"
 
 #: gui/settingsDialogs.py:1307
 msgid "Read by &paragraph"
@@ -2907,37 +2941,42 @@ msgid "Sleep mode on"
 msgstr "NVDA 일시 중지"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:154
+#: appModules/powerpnt.py:156
 msgid "Slide Master view"
 msgstr "Slide Master view"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:117
+#: appModules/powerpnt.py:119
 msgid "Slide Number placeholder"
 msgstr "Slide Number placeholder"
 
 #. Translators: The title for a Slide show in Microsoft PowerPoint that has completed.
-#: appModules/powerpnt.py:696
+#: appModules/powerpnt.py:750
 msgid "Slide Show - complete"
 msgstr "Slide Show - 끝"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:164
+#: appModules/powerpnt.py:166
 msgid "Slide Sorter view"
 msgstr "Slide Sorter view"
 
 #. Translators: The title of the current slide in a running Slide Show in Microsoft PowerPoint.
-#: appModules/powerpnt.py:693
+#: appModules/powerpnt.py:747
 msgid "Slide show - {slideName}"
 msgstr "Slide show - {slideName}"
 
+#. Translators: The title of the current slide (with notes) in a running Slide Show in Microsoft PowerPoint.
+#: appModules/powerpnt.py:744
+msgid "Slide show notes - {slideName}"
+msgstr "슬라이드쇼 노트 - {slideName}"
+
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:152
+#: appModules/powerpnt.py:154
 msgid "Slide view"
 msgstr "Slide view"
 
 #. Translators: the label for a slide in Microsoft PowerPoint.
-#: appModules/powerpnt.py:480
+#: appModules/powerpnt.py:482
 msgid "Slide {slideNumber}"
 msgstr "Slide {slideNumber}"
 
@@ -2983,7 +3022,7 @@ msgstr "비프음과 말하기"
 #. keyboard settings dialog.
 #: gui/settingsDialogs.py:627
 msgid "Speak command &keys"
-msgstr "핫키 알림 (&K)"
+msgstr "기능키 알림 (&K)"
 
 #. Translators: This is the label for a checkbox in the
 #. keyboard settings dialog.
@@ -3056,7 +3095,7 @@ msgid "Subject:"
 msgstr "제목:"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:99
+#: appModules/powerpnt.py:101
 msgid "Subtitle placeholder"
 msgstr "Subtitle placeholder"
 
@@ -3111,7 +3150,7 @@ msgid "Synthesizer Error"
 msgstr "음성 엔진 오류"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:115
+#: appModules/powerpnt.py:117
 msgid "Table placeholder"
 msgstr "Table placeholder"
 
@@ -3121,7 +3160,7 @@ msgstr "Table placeholder"
 msgid "Tamil grade 1"
 msgstr "타밀어 1종"
 
-#: NVDAObjects/IAccessible/__init__.py:1624
+#: NVDAObjects/IAccessible/__init__.py:1634
 msgid "Taskbar"
 msgstr "작업 표시줄"
 
@@ -3140,7 +3179,7 @@ msgid "Text frame"
 msgstr "텍스트 프레임"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:95
+#: appModules/powerpnt.py:97
 msgid "Text placeholder"
 msgstr "Text placeholder"
 
@@ -3196,17 +3235,17 @@ msgid "This change requires administrator privileges."
 msgstr "이 설정 변경은 관리자 권한이 있어야 가능합니다. "
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:172
+#: appModules/powerpnt.py:174
 msgid "Thumbnails"
 msgstr "Thumbnails"
 
 #. Translators: a label for a particular view or pane in Microsoft PowerPoint
-#: appModules/powerpnt.py:166
+#: appModules/powerpnt.py:168
 msgid "Title Master view"
 msgstr "Title Master view"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:93
+#: appModules/powerpnt.py:95
 msgid "Title placeholder"
 msgstr "Title placeholder"
 
@@ -3256,6 +3295,16 @@ msgstr ""
 "브라우저 모드와 포커스 모드를 전환합니다. 포커스 모드에서는 키보드를 사용하"
 "여 폼 필드 값을 조작하며, 브라우저 모드에서는 커서와 엘리멘트 핫키를 토해 문"
 "서를 읽을 수 있습니다. "
+
+#. Translators: The description for a script
+#: appModules/powerpnt.py:829
+msgid ""
+"Toggles between reporting the speaker notes or the actual slide content. "
+"This does not change what is visible on-screen, but only what the user can "
+"read with NVDA"
+msgstr ""
+"특정 슬라이드 내용과 스피커 노트 읽기를 토글합니다. 이 기능은 NVDA를 이용한 "
+"특정 내용 읽기를 조절하며 스크린에 표시된 슬라이드 내용은 변경하지 않습니다."
 
 #: globalCommands.py:630
 msgid ""
@@ -3460,17 +3509,17 @@ msgid "Version"
 msgstr "버전"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:125
+#: appModules/powerpnt.py:127
 msgid "Vertical Object placeholder"
 msgstr "Vertical Object placeholder"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:103
+#: appModules/powerpnt.py:105
 msgid "Vertical Text placeholder"
 msgstr "Vertical Text placeholder"
 
 #. Translators: Describes a type of placeholder shape in Microsoft PowerPoint.
-#: appModules/powerpnt.py:101
+#: appModules/powerpnt.py:103
 msgid "Vertical Title placeholder"
 msgstr "Vertical Title placeholder"
 
@@ -3489,7 +3538,7 @@ msgid "Voice dictionary (%s)"
 msgstr "(%s) 보이스 발음 사전"
 
 #. Translators: A title for a dialog shown while Microsoft PowerPoint initializes
-#: appModules/powerpnt.py:268
+#: appModules/powerpnt.py:270
 msgid "Waiting for Powerpoint..."
 msgstr "파워포인트 여는중..."
 
@@ -3781,7 +3830,7 @@ msgstr "버튼"
 
 #. Translators: Displayed in braille for a table cell column number.
 #. %s is replaced with the column number.
-#: braille.py:484
+#: braille.py:487
 #, python-format
 msgid "c%s"
 msgstr "c%s"
@@ -4118,11 +4167,11 @@ msgstr "임베디드 객체"
 #. Translators: This is the name of a key on the keyboard.
 #: keyLabels.py:69
 msgid "end"
-msgstr "엔트"
+msgstr "엔드"
 
 #: controlTypes.py:257
 msgid "end note"
-msgstr "미주"
+msgstr "밑줄"
 
 #. Translators: This is the name of a key on the keyboard.
 #: keyLabels.py:57
@@ -4286,7 +4335,7 @@ msgstr "그루핑"
 
 #. Translators: Displayed in braille for a heading with a level.
 #. %s is replaced with the level.
-#: braille.py:430
+#: braille.py:433
 #, python-format
 msgid "h%s"
 msgstr "h%s"
@@ -4587,7 +4636,7 @@ msgstr "lst"
 
 #. Translators: Displayed in braille when an object (e.g. a tree view item) has a hierarchical level.
 #. %s is replaced with the level.
-#: braille.py:471
+#: braille.py:474
 #, python-format
 msgid "lv %s"
 msgstr "lv %s"
@@ -5172,7 +5221,7 @@ msgstr "안 함"
 #. Separate strings have now been defined for commonly negated states (e.g. not selected and not checked),
 #. but this still might be used in some other cases.
 #. %s will be replaced with the negated state.
-#: braille.py:451 speech.py:814
+#: braille.py:454 speech.py:814
 #, python-format
 msgid "not %s"
 msgstr "%s 해제"
@@ -5431,7 +5480,7 @@ msgstr "보라색"
 
 #. Translators: Displayed in braille for a table cell row number.
 #. %s is replaced with the row number.
-#: braille.py:476
+#: braille.py:479
 #, python-format
 msgid "r%s"
 msgstr "r%s"
@@ -5643,7 +5692,7 @@ msgstr "선택됨"
 
 #. Translators: This is spoken to indicate what has been selected. for example 'selected hello world'
 #: compoundDocuments.py:401 globalCommands.py:131 speech.py:323 speech.py:515
-#: speech.py:530 virtualBuffers/__init__.py:742
+#: speech.py:530 appModules/powerpnt.py:714 virtualBuffers/__init__.py:742
 #, python-format
 msgid "selected %s"
 msgstr "%s 선택됨"
@@ -5724,12 +5773,12 @@ msgstr "space with dot"
 #. Translators: The message announced when toggling the speak typed command keyboard setting.
 #: globalCommands.py:205
 msgid "speak command keys off"
-msgstr "기능키 읽지 않음"
+msgstr "기능키 알림 해제"
 
 #. Translators: The message announced when toggling the speak typed command keyboard setting.
 #: globalCommands.py:209
 msgid "speak command keys on"
-msgstr "기능키 읽기 선택"
+msgstr "기능키 알림 선택"
 
 #: globalCommands.py:802
 msgid "speak progress bar updates"
@@ -5738,22 +5787,22 @@ msgstr "진행률 업데이트 출력"
 #. Translators: The message announced when toggling the speak typed characters keyboard setting.
 #: globalCommands.py:181
 msgid "speak typed characters off"
-msgstr "입력된 문자 읽지 않음"
+msgstr "입력한 글자 알림 해제"
 
 #. Translators: The message announced when toggling the speak typed characters keyboard setting.
 #: globalCommands.py:185
 msgid "speak typed characters on"
-msgstr "입력된 문자 읽기 선택"
+msgstr "입력한 글자 알림 선택"
 
 #. Translators: The message announced when toggling the speak typed words keyboard setting.
 #: globalCommands.py:193
 msgid "speak typed words off"
-msgstr "입력된 단어 읽지 않음"
+msgstr "입력한 단어 알림 해제"
 
 #. Translators: The message announced when toggling the speak typed words keyboard setting.
 #: globalCommands.py:197
 msgid "speak typed words on"
-msgstr "입력된 단어 읽기 선택"
+msgstr "입력한 단어 알림 선택"
 
 #: globalCommands.py:782
 msgid "speaks the current foreground object"
@@ -6033,7 +6082,7 @@ msgid "visited"
 msgstr "방문함"
 
 #. Translators: Displayed in braille for a link which has been visited.
-#: braille.py:436
+#: braille.py:439
 msgid "vlnk"
 msgstr "vlnk"
 
@@ -6173,7 +6222,7 @@ msgstr ""
 #. Translators: Spoken to indicate the position of an item in a group of items (such as a list).
 #. {number} is replaced with the number of the item in the group.
 #. {total} is replaced with the total number of items in the group.
-#: braille.py:467 speech.py:825
+#: braille.py:470 speech.py:825
 msgid "{number} of {total}"
 msgstr "{number} / {total}"
 
@@ -6199,62 +6248,3 @@ msgstr ""
 #: NVDAObjects/behaviors.py:359
 msgid "{symbol} as in {description}"
 msgstr ": {description}"
-
-#~ msgid "Translation &table:"
-#~ msgstr "점자 출력 표기법 (&T)"
-
-#~ msgid "%s %s through %s %s"
-#~ msgstr "%s %s 에서 %s %s"
-
-#~ msgid "beeps"
-#~ msgstr "경고음"
-
-#~ msgid "talk"
-#~ msgstr "음성 출력 활성화"
-
-#~ msgid "default action failed"
-#~ msgstr "기본 동작 실패"
-
-#~ msgid "layout %s"
-#~ msgstr "%s 레이아웃"
-
-#~ msgid "%s device found"
-#~ msgstr "%s 디스플레이 검색됨"
-
-#~ msgid "%s: %s, defaulting to %s"
-#~ msgstr "%s: %s, %s로 설정됨"
-
-#~ msgid "Badly formed configuration file"
-#~ msgstr "환경 파일 손상됨"
-
-#~ msgid "Error parsing configuration file: %s"
-#~ msgstr "%s 환경 파일 분석 오류"
-
-#~ msgid ""
-#~ "Errors in configuration file '%s':\n"
-#~ "%s"
-#~ msgstr ""
-#~ "환경 파일 '%s'에 문제가 있습니다:\n"
-#~ "%s"
-
-# The string identifier does not distinguish between total number of items versus the position of the current item. Used "/" between the strings e.g. 1/2 would mean 1 of 2. Frequently used in Braille Sense firmware.
-#~ msgid "%s of %s"
-#~ msgstr "%s slash %s"
-
-#~ msgid ""
-#~ "This add-on seems to already be installed. Please remove the existing add-"
-#~ "on and try again."
-#~ msgstr ""
-#~ "선택된 추가 기능은 이미 설치되어 있을 수 있습니다다. 추가 기능을 삭제하고 "
-#~ "다시 설치하시기 바랍니다."
-
-#~ msgid "loads the saved NVDA configuration, overriding current changes"
-#~ msgstr "기존의 저장된 NVDA 환경설정을 불러 옵니다."
-
-#, fuzzy
-#~ msgid "Welcome to NVDA!\n"
-#~ msgstr "NVDA에 오신것을 환영합니다!"
-
-#, fuzzy
-#~ msgid "Your gesture map file contains errors.\n"
-#~ msgstr "제스쳐 맵 파일 오류"

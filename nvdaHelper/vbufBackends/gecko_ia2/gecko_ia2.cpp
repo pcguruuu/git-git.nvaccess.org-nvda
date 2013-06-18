@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 using namespace std;
 
+#define NAVRELATION_LABELLED_BY 0x1003
 #define NAVRELATION_NODE_CHILD_OF 0x1005
 
 HWND findRealMozillaWindow(HWND hwnd) {
@@ -55,6 +56,12 @@ IAccessible2* IAccessible2FromIdentifier(int docHandle, int ID) {
 	VARIANT varChild;
 	if(AccessibleObjectFromEvent((HWND)docHandle,OBJID_CLIENT,ID,&pacc,&varChild)!=S_OK) {
 		LOG_DEBUG(L"AccessibleObjectFromEvent failed");
+		return NULL;
+	}
+	if (varChild.lVal!=CHILDID_SELF) {
+		// IAccessible2 can't be implemented on a simple child,
+		// so this object is invalid.
+		pacc->Release();
 		return NULL;
 	}
 	VariantClear(&varChild);
@@ -252,6 +259,28 @@ void GeckoVBufBackend_t::versionSpecificInit(IAccessible2* pacc) {
 	SysFreeString(toolkitVersion);
 }
 
+bool isLabelVisible(IAccessible2* acc) {
+	VARIANT child, target;
+	child.vt = VT_I4;
+	child.lVal = 0;
+	if (acc->accNavigate(NAVRELATION_LABELLED_BY, child, &target) != S_OK)
+		return false;
+	IAccessible2* targetAcc;
+	HRESULT res;
+	res = target.pdispVal->QueryInterface(IID_IAccessible2, (void**)&targetAcc);
+	VariantClear(&target);
+	if (res != S_OK)
+		return false;
+	VARIANT state;
+	res = targetAcc->get_accState(child, &state);
+	targetAcc->Release();
+	if (res != S_OK)
+		return false;
+	if (state.lVal & STATE_SYSTEM_INVISIBLE)
+		return false;
+	return true;
+}
+
 VBufStorage_fieldNode_t* GeckoVBufBackend_t::fillVBuf(IAccessible2* pacc,
 	VBufStorage_buffer_t* buffer, VBufStorage_controlFieldNode_t* parentNode, VBufStorage_fieldNode_t* previousNode,
 	IAccessibleTable* paccTable, IAccessibleTable2* paccTable2, long tableID,
@@ -402,14 +431,16 @@ VBufStorage_fieldNode_t* GeckoVBufBackend_t::fillVBuf(IAccessible2* pacc,
 	if(pacc->get_accName(varChild,&name)!=S_OK)
 		name=NULL;
 
-	BSTR description=NULL;
-	if(pacc->get_accDescription(varChild,&description)==S_OK) {
+	wstring description;
+	BSTR rawDesc=NULL;
+	if(pacc->get_accDescription(varChild,&rawDesc)==S_OK) {
 		if(this->hasEncodedAccDescription) {
-			if(wcsncmp(description,L"Description: ",13)==0)
-				parentNode->addAttribute(L"description",&description[13]);
+			if(wcsncmp(rawDesc,L"Description: ",13)==0)
+				description=&description[13];
 		} else
-			parentNode->addAttribute(L"description",description);
-		SysFreeString(description);
+			description=rawDesc;
+		parentNode->addAttribute(L"description",description);
+		SysFreeString(rawDesc);
 	}
 
 	wstring locale;
@@ -484,7 +515,7 @@ VBufStorage_fieldNode_t* GeckoVBufBackend_t::fillVBuf(IAccessible2* pacc,
 		isVisible = false;
 	} else {
 		isVisible = width > 0 && height > 0;
-		if (IA2TextIsUnneededSpace || role == ROLE_SYSTEM_COMBOBOX || (role == ROLE_SYSTEM_LIST && !(states & STATE_SYSTEM_READONLY)) || role == IA2_ROLE_EMBEDDED_OBJECT || role == ROLE_SYSTEM_APPLICATION || role == ROLE_SYSTEM_DIALOG)
+		if (IA2TextIsUnneededSpace || role == ROLE_SYSTEM_COMBOBOX || (role == ROLE_SYSTEM_LIST && !(states & STATE_SYSTEM_READONLY)) || role == IA2_ROLE_EMBEDDED_OBJECT || role == ROLE_SYSTEM_APPLICATION || role == ROLE_SYSTEM_DIALOG || role == ROLE_SYSTEM_OUTLINE)
 			renderChildren = false;
 		else {
 			if(pacc->get_accChildCount(&childCount)==S_OK) {
@@ -574,7 +605,12 @@ VBufStorage_fieldNode_t* GeckoVBufBackend_t::fillVBuf(IAccessible2* pacc,
 			else
 				fillTableCounts<IAccessibleTable>(parentNode, pacc, paccTable);
 			// Add the table summary if one is present and the table is visible.
-			if (name && isVisible && (tempNode = buffer->addTextFieldNode(parentNode, previousNode, name))) {
+			if (isVisible &&
+				(!description.empty() && (tempNode = buffer->addTextFieldNode(parentNode, previousNode, description))) ||
+				// If there is no caption, the summary (if any) is the name.
+				// There is no caption if the label isn't visible.
+				(name && !isLabelVisible(pacc) && (tempNode = buffer->addTextFieldNode(parentNode, previousNode, name)))
+			) {
 				if(!locale.empty()) tempNode->addAttribute(L"language",locale);
 				previousNode = tempNode;
 			}

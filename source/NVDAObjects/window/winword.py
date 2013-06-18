@@ -8,6 +8,8 @@ import ctypes
 from comtypes import COMError, GUID, BSTR
 import comtypes.client
 import comtypes.automation
+import locale
+import languageHandler
 import ui
 import NVDAHelper
 import XMLFormatting
@@ -124,6 +126,7 @@ formatConfigFlagsMap={
 	"reportLinks":2048,
 	"reportComments":4096,
 	"reportHeadings":8192,
+	"autoLanguageSwitching":16384,	
 }
 
 class WordDocumentTextInfo(textInfos.TextInfo):
@@ -172,6 +175,7 @@ class WordDocumentTextInfo(textInfos.TextInfo):
 	def getTextWithFields(self,formatConfig=None):
 		if not formatConfig:
 			formatConfig=config.conf['documentFormatting']
+		formatConfig['autoLanguageSwitching']=config.conf['speech'].get('autoLanguageSwitching',False)
 		startOffset=self._rangeObj.start
 		endOffset=self._rangeObj.end
 		if startOffset==endOffset:
@@ -183,13 +187,21 @@ class WordDocumentTextInfo(textInfos.TextInfo):
 			log.debugWarning("winword_getTextInRange failed with %d"%res)
 			return [self.text]
 		commandList=XMLFormatting.XMLTextParser().parse(text.value)
-		for index in xrange(len(commandList)):
-			if isinstance(commandList[index],textInfos.FieldCommand):
-				field=commandList[index].field
+		for index,item in enumerate(commandList):
+			if isinstance(item,textInfos.FieldCommand):
+				field=item.field
 				if isinstance(field,textInfos.ControlField):
-					commandList[index].field=self._normalizeControlField(field)
+					item.field=self._normalizeControlField(field)
 				elif isinstance(field,textInfos.FormatField):
-					commandList[index].field=self._normalizeFormatField(field)
+					item.field=self._normalizeFormatField(field)
+			elif index>0 and isinstance(item,basestring) and item.isspace():
+				 #2047: don't expose language for whitespace as its incorrect for east-asian languages 
+				lastItem=commandList[index-1]
+				if isinstance(lastItem,textInfos.FieldCommand) and isinstance(lastItem.field,textInfos.FormatField):
+					try:
+						del lastItem.field['language']
+					except KeyError:
+						pass
 		return commandList
 
 	def _normalizeControlField(self,field):
@@ -227,9 +239,24 @@ class WordDocumentTextInfo(textInfos.TextInfo):
 	def _normalizeFormatField(self,field):
 		color=field.pop('color',None)
 		if color is not None:
-			field['color']=colors.RGB.fromCOLORREF(int(color))
+			field['color']=colors.RGB.fromCOLORREF(int(color))		
+		try:
+			languageId = int(field.pop('wdLanguageId',0))
+			if languageId:
+				field['language']=self._getLanguageFromLcid(languageId)
+		except:
+			log.debugWarning("language error",exc_info=True)
+			pass
 		return field
 
+	def _getLanguageFromLcid(self, lcid):
+		"""
+		gets a normalized locale from a lcid
+		"""
+		lang = locale.windows_locale[lcid]
+		if lang:
+			return languageHandler.normalizeLanguage(lang)
+		
 	def expand(self,unit):
 		if unit==textInfos.UNIT_LINE and self.basePosition not in (textInfos.POSITION_CARET,textInfos.POSITION_SELECTION):
 			unit=textInfos.UNIT_SENTENCE

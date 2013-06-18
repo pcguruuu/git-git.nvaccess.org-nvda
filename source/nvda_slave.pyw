@@ -40,7 +40,7 @@ def main():
 				None,winUser.SW_SHOWNORMAL)
 		elif action=="setNvdaSystemConfig":
 			import config
-			config._setSystemConfig(args[0])
+			config._setSystemConfig(args[0].decode('mbcs'))
 		elif action == "config_setStartOnLogonScreen":
 			enable = bool(int(args[0]))
 			import config
@@ -83,6 +83,16 @@ def main():
 				_("Cannot install NVDA add-on from {path}.\n"
 				"You must be running NVDA to be able to install add-ons.").format(path=addonPath),
 				0, winUser.MB_ICONERROR)
+		elif action == "comGetActiveObject":
+			import comHelper
+			# py2exe scraps sys.stdout.
+			sys.__stdout__.write("%s\n" %
+				comHelper._lresultFromGetActiveObject(args[0], bool(int(args[1]))))
+			sys.__stdout__.flush()
+			try:
+				raw_input()
+			except EOFError:
+				pass
 		else:
 			raise ValueError("No such action")
 

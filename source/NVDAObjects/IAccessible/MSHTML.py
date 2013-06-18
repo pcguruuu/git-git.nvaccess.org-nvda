@@ -103,7 +103,14 @@ def HTMLNodeFromIAccessible(IAccessibleObject):
 
 def locateHTMLElementByID(document,ID):
 	try:
-		element=document.getElementsByName(ID).item(0)
+		elements=document.getElementsByName(ID)
+		if elements is not None:
+			element=elements.item(0)
+		else: #probably IE 10 in standards mode (#3151)
+			try:
+				element=document.all.item(ID)
+			except:
+				element=None
 	except COMError as e:
 		log.debugWarning("document.getElementsByName failed with COMError %s"%e)
 		element=None
@@ -122,6 +129,8 @@ def locateHTMLElementByID(document,ID):
 		frames=document.getElementsByTagName(tag)
 	except COMError as e:
 		log.debugWarning("document.getElementsByTagName failed with COMError %s"%e)
+		return None
+	if not frames: #frames can be None in IE 10
 		return None
 	for frame in frames:
 		try:
@@ -434,7 +443,10 @@ class MSHTML(IAccessible):
 
 	def _get_location(self):
 		if self.HTMLNodeName and not self.HTMLNodeName.startswith('#'):
-			r=self.HTMLNode.getBoundingClientRect()
+			try:
+				r=self.HTMLNode.getBoundingClientRect()
+			except COMError:
+				return None
 			width=r.right-r.left
 			height=r.bottom-r.top
 			p=ctypes.wintypes.POINT(x=r.left,y=r.top)
@@ -474,8 +486,11 @@ class MSHTML(IAccessible):
 			presType=self.presType_layout
 		if presType==self.presType_content and self.role in (controlTypes.ROLE_TABLECELL,controlTypes.ROLE_TABLEROW,controlTypes.ROLE_TABLE,controlTypes.ROLE_TABLEBODY):
 			ti=self.treeInterceptor
-			if ti and ti.isReady and ti.isNVDAObjectPartOfLayoutTable(self):
-				presType=self.presType_layout
+			try:
+				if ti and ti.isReady and ti.isNVDAObjectPartOfLayoutTable(self):
+					presType=self.presType_layout
+			except LookupError:
+				pass
 		return presType
 
 
@@ -610,7 +625,7 @@ class MSHTML(IAccessible):
 			states.add(controlTypes.STATE_COLLAPSED)
 		ariaInvalid=self.HTMLAttributes['aria-invalid']
 		if ariaInvalid=="true":
-			states.add(controlTypes.STATE_INVALID)
+			states.add(controlTypes.STATE_INVALID_ENTRY)
 		ariaGrabbed=self.HTMLAttributes['aria-grabbed']
 		if ariaGrabbed=="true":
 			states.add(controlTypes.STATE_DRAGGING)
@@ -771,6 +786,8 @@ class MSHTML(IAccessible):
 		if nodeName == "A":
 			return bool(attribs["href"])
 		if nodeName in ( "BODY", "OBJECT", "APPLET"):
+			return True
+		if nodeName=="IMG" and not self.HTMLNodeHasAncestorIAccessible and self.IAccessibleRole==oleacc.ROLE_SYSTEM_GRAPHIC and self.IAccessibleStates&oleacc.STATE_SYSTEM_FOCUSABLE:
 			return True
 		return self.HTMLNode.hasAttribute("tabindex")
 

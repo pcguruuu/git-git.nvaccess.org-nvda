@@ -116,6 +116,7 @@ class AppModule(appModuleHandler.AppModule):
 		else:
 			# Translators: This is presented to inform the user that no instant message has been received.
 			ui.message(_("No message yet"))
+	# Translators: The description of an NVDA command to view one of the recent messages.
 	script_readMessage.__doc__=_("Displays one of the recent messages")
 
 	def __init__(self, *args, **kwargs):
@@ -223,7 +224,7 @@ class MPropertyPage(Dialog,IAccessible):
 				tc=None
 			if tc and tc.role==controlTypes.ROLE_TABCONTROL:
 				children=tc.children
-				for index in range(len(children)):
+				for index in xrange(len(children)):
 					if (children[index].role==controlTypes.ROLE_TAB) and (controlTypes.STATE_SELECTED in children[index].states):
 						name=children[index].name
 						break

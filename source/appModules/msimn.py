@@ -94,7 +94,7 @@ class MessageListItem(sysListView32.ListItem):
 		info.expand(textInfos.UNIT_CHARACTER)
 		fields=info.getTextWithFields()
 		try:
-			isUnread=fields[1].field['bold']
+			isUnread=fields[0].field['bold']
 		except:
 			isUnread=False
 		return isUnread

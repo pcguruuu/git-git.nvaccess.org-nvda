@@ -567,7 +567,7 @@ class ITextDocumentTextInfo(textInfos.TextInfo):
 		left,top=embedRangeObj.GetPoint(comInterfaces.tom.tomStart)
 		right,bottom=embedRangeObj.GetPoint(comInterfaces.tom.tomEnd)
 		import displayModel
-		label=displayModel.getWindowTextInRect(self.obj.appModule.helperLocalBindingHandle, self.obj.windowHandle, left, top, right, bottom+10,1,1)[0]
+		label=displayModel.DisplayModelTextInfo(self.obj, textInfos.Rect(left, top, right, bottom+10)).text
 		if label and not label.isspace():
 			return label
 		try:
@@ -602,7 +602,7 @@ class ITextDocumentTextInfo(textInfos.TextInfo):
 			return u'*'*len(bufText)
 		newTextList=[]
 		start=rangeObj.start
-		for offset in range(len(bufText)):
+		for offset in xrange(len(bufText)):
 			if ord(bufText[offset])==0xfffc:
 				if embedRangeObj is None: embedRangeObj=rangeObj.duplicate
 				embedRangeObj.setRange(start+offset,start+offset+1)

@@ -3,39 +3,92 @@ Que hai de Novo no NVDA
 
 %!includeconf: ../changes.t2tconf
 
+= 2013.1.1 =
+
+== Corrección de Erros ==
+- Prodúcense caracteres correctos cando se teclean na propria interfaz do NVDA mentres se utiliza  un método de entrada Coreano ou Xaponés mentres sexa o método predeterminado. (#2909)
+- En Internet Explorer e outros controis MSHTML, os campos marcados como contendo unha entrada inválida agora manéxanse correctamente. (#3256)
+
+
 = 2013.1 =
+O máis subliñable nesta versión inclúe unha distribución de teclado portátil máis intuitiva e consistente; soporte básico para o Microsoft PowerPoint; soporte para descripcións longas en navegadores web; e soporte para a entrada de braille computerizado para liñas braille que teñan un teclado braille.
+
+== Importante ==
+
+=== Nova Distribución Teclado Portátil ===
+A distribución de teclado portátil redeseñouse por completo para facela máis intuitiva e consistente.
+A nova distribución utiliza as teclas do cursor en combinación ca tecla NVDA e outras modificadoras para ordes de revisión.
+
+Por favor ten en conta os seguintes  cambios para ordes comúnmente utilizadas:
+|| Nome | Tecla |
+| Ler todo | NVDA+a |
+| Ler liña actual | NVDA+l |
+| Ler selección de texto actual | NVDA+shift+s |
+| Anunciar barra de estado | NVDA+shift+fin |
+Ademáis, entre outros cambios, variaron as ordes para toda a navegación de obxectos, revisión de texto, clic do rato e grupos de opcións do sintetizador.
+Por favor mira o documento [Referencia Rápida de Ordes keyCommands.html] para as novas teclas.
+
 
 == Novas Características ==
 - Soporte básico para editar e ler presentacións de Microsoft PowerPoint. (#501)
 - Soporte básico para ler e escreber mensaxes en Lotus Notes 8.5. (#543)
+- Soporte para o cambio automático de lingua cando se lean documentos no Microsoft Word. (#2047) 
 - No modo Navegación para MSHTML (ex.: Internet Explorer) e Gecko (ex.: Firefox), agora anúnciase a existencia de descripcións longas. Tamén é posible abrir a descripción longa nunha ventá nova premendo NVDA+d. (#809)
 - As notificacións en Internet Explorer 9 e superior agora fálanse (como contido bloqueado ou descargas de ficheiros). (#2343)
 - O anunciado automático das cabeceiras de fila e columna agora sopórtase para documentos en modo navegación en Internet Explorer e outros controis MSHTML. (#778)
-- Nova lingua: Aragonés
-- Nova táboa de transcripción braille:  Danés grado 2.
+- Novas linguas: Aragonés, irlandés.
+- Novas táboas de transcripción braille:  Danés grado 2, Coreano grao 1.
 - Soporte para liñas braille conectadas a traverso do bluetooth nun ordenador executando o Bluetooth Stack for Windows de Toshiba. (#2419)
 - Soporte para a selección de porto cando se utilicen liñas freedom Scientific (Automático, USB ou Bluetooth).
 - Soporte para a familia BrailleNote de anotadores electrónicos de Humanware cando actúen como unha terminal braille para un lector de pantalla. (#2012)
 - Soporte para  modelos antigos das liñas braille Papenmeier BRAILLEX. (#2679)
 - Soporte para a entrada de braille computerizado  para liñas braille que posúan un teclado braille. (#808)
+- Novas opcións de teclado que permiten  escoller se NVDA debería interrumpir a fala para os caracteres escribidos e/ou a tecla Intro. (#698)
+- Soporte para varios navegadores web baseados no Google chrome: Rockmelt, BlackHawk, Comodo Dragon e SRWare Iron. (#2236, #2813, #2814, #2815)
+ 
+
+== Cambios ==
+- Actualizado o transcriptor braille liblouis ó 2.5.2. (#2737)
+- A distribución de teclado portátil redeseñouse  por completo para facela máis intuitiva e consistente. (#804)
+- Actualizado o sintetizador de voz eSpeak a 1.47.11. (#2680, #3124, #3132, #3141, #3143, #3172)
 
 
 == Corrección de Fallos ==
 - As teclas de navegación rápida para brincar ó seguinte ou anterior separador en modo Navegación agora funcionan en Internet Explorer e outros controis MSHTML. (#2781)
-- Se NVDA volta a eSpeak ou non fala debido a un sintetizador de voz configurado que falla cando NVDA se inicia, a configuración xa non se actualiza para  configurarse co sintetizador ó que se retornou como a elección configurada, o que significa que agora o sintetizador orixinal probarase de novo a próxima vez que NVDA arranque. (#2589)
+- Se o NVDA se cambia a eSpeak debido a que o sintetizador de voz configurado falla cando NVDA arrinca, o sintetizador configurado xa non se deixa automáticamente na opción de eSpeak. Esto significa que agora, o sintetizador orixinal será probado de novo a próxima vez que NVDA arrinque. (#2589)
+- Se o NVDA se cambia a sen braille debido a que a liña braille configurada  falla cando NVDA arrinca, a liña configurada xa non se deixa automáticamente na opción de sen braille. Esto significa que agora, a liña orixinal será probada de novo a próxima vez que NVDA arrinque. (#2264)
 - No modo navegación en aplicacións de Mozilla, as actualizacións das táboas agora procésanse correctamente. Por exemplo, en actualización de celdas, as cordinadas de fila e columna anúncianse e a navegación da táboa funciona como debería. (#2784)
 - No modo navegación en navegadores web, certos gráficos cliqueables non etiquetados que non se procesaban anteriormente agora procésanse correctamente. (#2838)
-- As versións anteriores e actuais do SecureCRT (como a 6.1.1) agora se soportan. (#2800)
+- As versións anteriores e actuais do SecureCRT (como a 6.1.1) agora sopórtanse. (#2800)
 - Para métodos de entrada como Easy Dots IME baixo XP, a cadea de lectura agora anúnciase correctamente.
 - A lista de candidatos do método de entrada Chinés Simplificado Microsoft Pinyin baixo Windows 7 agora lese correctamente cando se cambian páxinas cas flechas esquerda e dereita, e cando se abre primeiro con Inicio.
 - Cando se garda a información de pronunciación persoalizada de símbolos , o campo avanzado "preserve" xa non se elimina. (#2852)
 - Cando se desactiva a detección automática de actualizacións, NVDA xa non ten de reiniciarse para que todos os cambios teñan efecto.
 - NVDA xa non falla ó iniciarse se un complemento non se pode eliminar debido a que o seu directorio está a ser utilizado actualmente por outra aplicación. (#2860)
 - As etiquetas de pestanas no diálogo de preferencias do DropBox agora poden verse ca Revisión Cha. 
-- Se a lingua de entrada se cambia a algún outro que o predeterminado, NVDA agora detecta as teclas correctamente para ordes e o modo de axuda de entrada.
+- Se a lingua de entrada se cambia a algúnha outra que a predeterminada, NVDA agora detecta as teclas correctamente para ordes e o modo de axuda de entrada.
 - Para linguas como a alemana onde o signo + (máis) é unha  tecla soa no teclado, agora é posible vincularlle ordes utilizando a palabra "plus". (#2898)
-+- En Internet Explorer e outros controis  MSHTML, as comiñas agora anúncianse onde proceda. (#2888)
+- En Internet Explorer e outros controis  MSHTML, as comiñas agora anúncianse onde proceda. (#2888)
 - O controlador das liñas HumanWare Brailliant BI/Bbraille agora pode  seleccionarse cando a liña estea conectada a través do Bluetooth pero nunca se conectaran a través do USB.
+- O filtrado de elementos na Lista de Elementos do modo navegación co filtro de texto en maiúsculas agora devolve resultados non sensibles ás maiúsculas igual que nas minúsculas en lugar de nada en absoluto. (#2951)
+- Nos navegadores de Mozilla, o modo navegación pode utilizarse de novo cando se enfoque contido Flash. (#2546)
+- Cando se utilice unha táboa de braille contraído e estea habilitada a opción expandir a braille computerizado para a palabra no cursor , o cursor braille agora colócase correctamente cando se atope despóis dunha palabra onde un carácter se  represente con varias celdas braille (ex.: signo de maiúsculas, signo de diálogo, signo de número, etc.). (#2947)
+- A selección do texto agora amósase correctamente nunha liña braille en aplicacións como controis de edición de Microsoft word 2003 e Internet Explorer.
+- É posible de novo seleccionar texto nunha dirección cara atrás en Microsoft Word mentres estea habilitado o Braille.
+- Cando se estea en revisión,  eliminando caracteres co retroceso ou suprimir en controis de edición de Scintilla, NVDA anuncia correctamente caracteres multibyte. (#2855)
+- NVDA xa non fallará ó instalar cando a ruta do perfil do usuario conteña certos caracteres multibyte. (#2729)
+- O anunciado de grupos para controis Vista de Lista (SysListview32) en aplicacións de 64 bit xa non causa un erro.
+- No modo navegación nas aplicacións de Mozilla, o contido de texto xa non se trata incorrectamente como editable nalgúns casos extranos. (#2959)
+- No IBM Lotus Symphony e no OpenOffice, movendo o cursor do sistema agora móvese o cursor de revisión se procede.
+- O contido do Adobe Flash agora é accesible en Internet Explorer en Windows 8. (#2454)
+- Correxido o soporte Bluetooth para a Papenmeier Braillex Trio. (#2995)
+- Correxida a incapacidade para utilizar certas voces de Microsoft Speech API versión 5 como as voces de Koba Speech 2. (#2629)
+- En aplicacións que utilicen o Java Access Bridge, agora as liñas braille actualízanse correctamente cando o cursor se mova en campos de texto editables . (#3107)
+- Sopórtase o ponto de referencia en formulario en modo navegación en documentos que soporten pontos de referencia. (#2997) 
+- O controlador do sintetizador de voz eSpeak agora manexa a lectura por caracteres máis apropriadamente (ex.: anuncia un nome de letra extranxeiro ou un valor en lugar de só o seu son ou nome xenérico). (#3106)
+- NVDA xa non falla ó copiar as opcións do usuario para utilizalas na autentificación e noutras pantallas seguras cando a ruta do perfil do usuario contén caracteres non ASCII. (#3092)
+- NVDA xa non se bloquea cando se utiliza a entrada de caracteres asiáticos nalgunhas aplicacións .NET. (#3005)
+- Agora é posible utilizar o modo navegación para páxinas en Internet Explorer 10 cando se estea no modo estándar; ex.: www.gmail.com login page. (#3151)
 
 
 == Cambios para Desenroladores ==
@@ -45,6 +98,7 @@ Que hai de Novo no NVDA
 - Agora sopórtase a entrada braille  dende teclados braille. (#808)
  - A entrada braille abránguese pola crase brailleInput.BrailleInputGesture ou unha subcrase da mesma.
  - As subcrases de braille.BrailleDisplayGesture (segundo se implementaron nos controladores das liñas braille) tamén poden herdar de brailleInput.BrailleInputGesture. Esto permite amosar ordes  e que a entrada braille se manelle pola mesma crase gesture.
+- Agora podes utilizar comHelper.getActiveObject para conseguer un obxecto COM activo dende un proceso normal cando NVDA estea executándose co privilexio UIAccess. (#2483)
 
 
 = 2012.3 =
@@ -687,7 +741,7 @@ Esta revisión enfócase principalmente en corrección de fallos e melloras á e
 
 == Novas características ==
 - 	NVDA xa non falla ó arrancar nun sistema sen dispositivos de saída de audio. Obviamente, será necesario utilizar unha líña braille ou o Display synthesiser para a saída neste caso. (#425)
-- Foi engadida unha casiña de verificación Anunciar Zonas ó diálogo de Opcións de formato de Documento que che permite configurar se NVDA debería anunciar zonas en documentos web. Para compatibilidade ca versión anterior, a opción está activada de maneira predeterminada.
+- Foi engadida unha casiña de verificación Anunciar pontos de referencia ó diálogo de Opcións de formato de Documento que che permite configurar se NVDA debería anunciar pontos de referencia en documentos web. Para compatibilidade ca versión anterior, a opción está activada de maneira predeterminada.
 - Se falar teclas de ordes está activada NVDA agora anunciará os nomes das teclas multimedia (ex.: reproducir, deter, páxina de comezo, etc.) cando sexan premedas. (#472)
 - NVDA agora anuncia a palabra que estea sendo eliminada cando se prema control+retroceso en controis que o soporten. (#491)
 - As flechas de cursor agora poden ser utilizadas na ventá do formateador Web para navegar e ler o texto. (#452)
@@ -767,8 +821,8 @@ O máis suliñable desta versión inclúe o soporte para edicións de 64 bit de 
 - NVDA pode ler pantallas seguras de Windows como a autentificación de Windows (logon), control+alt+suprimir e pantallas do UAC en Windows XP e posteriores. A leitura das pantallas de autentificación de Windows (logon) pode ser configurada dende o diálogo de Opcións Xerais. (#97)
 - Engadido un controlador para as liñas braille da serie Optelec ALVA BC6.
 - Cando se navega por documentos web, agora podes premer n e shift+n para saltar cara adiante e cara atrás pasando bloques de ligas, respectivamente.
-- Cando se navega por documentos web, as zonas de ARIA agora son anunciadas, e podes moverte adiante e atrás a traverso deles utilizando d e shift+d, respectivamente. (#192)
-- O diálogo de lista de ligas dispoñible cando se exploran documentos web convertiuse agora nun diálogo Lista de Elementos que pode listar ligas, cabeceiras e zonas. As cabeceiras e zonas son presentados xerárquicamente. (#363)
+- Cando se navega por documentos web, os pontos de referencia de ARIA agora son anunciados, e podes moverte adiante e atrás a traverso deles utilizando d e shift+d, respectivamente. (#192)
+- O diálogo de lista de ligas dispoñible cando se exploran documentos web convertiuse agora nun diálogo Lista de Elementos que pode listar ligas, cabeceiras e pontos de referencia. As cabeceiras e pontos de referencia son presentados xerárquicamente. (#363)
 - O novo diálogo Lista de Elementos filtra a lista segundo escribas para conter só aquéles elementos incluído o texto que foi tecleado. Podes premer retroceso para limpiar o filtro tal que todos os elementos sexan presentados novamente. (#173)
 - As versións portátiles do NVDA agora procuran no directorio 'userConfig' dentro do directorio de NVDA, as configuracións do usuario. Como a versión do instalador, esto mantén a configuración do usuario separada do NVDA.  
 - Os módulos personais de apps, os controladores de liñas braille e os controladores de sintetizadores agora poden ser almacenados  no directorio da configuración do usuario. (#337)

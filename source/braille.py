@@ -371,11 +371,15 @@ class Region(object):
 		# liblouis gives us back a character string of cells, so convert it to a list of ints.
 		# For some reason, the highest bit is set, so only grab the lower 8 bits.
 		self.brailleCells = [ord(cell) & 255 for cell in braille]
-		# HACK: Work around a liblouis bug whereby an empty braille translation is returned.
-		if not self.brailleCells:
-			# Just provide a space.
-			self.brailleCells.append(0)
-			self.brailleToRawPos.append(0)
+		# #2466: HACK: liblouis incorrectly truncates trailing spaces from its output in some cases.
+		# Detect this and add the spaces to the end of the output.
+		if self.rawText and self.rawText[-1] == " ":
+			# rawToBraillePos isn't truncated, even though brailleCells is.
+			# Use this to figure out how long brailleCells should be and thus how many spaces to add.
+			correctCellsLen = self.rawToBraillePos[-1] + 1
+			currentCellsLen = len(self.brailleCells)
+			if correctCellsLen > currentCellsLen:
+				self.brailleCells.extend((0,) * (correctCellsLen - currentCellsLen))
 		if self.cursorPos is not None:
 			# HACK: The cursorPos returned by liblouis is notoriously buggy (#2947 among other issues).
 			# rawToBraillePos is usually accurate.
@@ -761,8 +765,11 @@ class TextInfoRegion(Region):
 		# Strip line ending characters, but add a space in case the cursor is at the end of the reading unit.
 		self.rawText = self.rawText.rstrip("\r\n\0\v\f") + " "
 		self._rawToContentPos.append(self._currentContentPos)
-		del self.rawTextTypeforms[len(self.rawText) - 1:]
+		rawTextLen = len(self.rawText)
+		del self.rawTextTypeforms[rawTextLen - 1:]
 		self.rawTextTypeforms.append(louis.plain_text)
+		if self.cursorPos is not None and self.cursorPos >= rawTextLen:
+			self.cursorPos = rawTextLen - 1
 
 		# If this is not the start of the object, hide all previous regions.
 		start = cursor.obj.makeTextInfo(textInfos.POSITION_FIRST)
@@ -1227,7 +1234,7 @@ class BrailleHandler(baseObject.AutoPropertyObject):
 		else:
 			self.handleGainFocus(api.getFocusObject())
 
-	def setDisplayByName(self, name):
+	def setDisplayByName(self, name, isFallback=False):
 		if not name:
 			self.display = None
 			self.displaySize = 0
@@ -1259,12 +1266,13 @@ class BrailleHandler(baseObject.AutoPropertyObject):
 				self.display = newDisplay
 			self.displaySize = newDisplay.numCells
 			self.enabled = bool(self.displaySize)
-			config.conf["braille"]["display"] = name
+			if not isFallback:
+				config.conf["braille"]["display"] = name
 			log.info("Loaded braille display driver %s, current display has %d cells." %(name, self.displaySize))
 			return True
 		except:
 			log.error("Error initializing display driver", exc_info=True)
-			self.setDisplayByName("noBraille")
+			self.setDisplayByName("noBraille", isFallback=True)
 			return False
 
 	def _updateDisplay(self):
@@ -1322,7 +1330,7 @@ class BrailleHandler(baseObject.AutoPropertyObject):
 		If a key is pressed the message will be dismissed by the next text being written to the display
 		@postcondition: The message is displayed.
 		"""
-		if not self.enabled:
+		if not self.enabled or config.conf["braille"]["messageTimeout"] == 0:
 			return
 		if self.buffer is self.messageBuffer:
 			self.buffer.clear()
@@ -1395,8 +1403,10 @@ class BrailleHandler(baseObject.AutoPropertyObject):
 		"""Checks to see if the final text region needs its caret updated and if so calls _doCursorMove for the region."""
 		region=self.mainBuffer.regions[-1] if self.mainBuffer.regions else None
 		if isinstance(region,TextInfoRegion) and region.pendingCaretUpdate:
-			self._doCursorMove(region)
-			region.pendingCaretUpdate=False
+			try:
+				self._doCursorMove(region)
+			finally:
+				region.pendingCaretUpdate=False
 
 	def _doCursorMove(self, region):
 		self.mainBuffer.saveWindow()
@@ -1527,7 +1537,7 @@ class BrailleDisplayDriver(baseObject.AutoPropertyObject):
 
 	#: Automatic port constant to be used by braille displays that support the "automatic" port
 	#: @type: Tupple
-	# Translators String representing the automatic port selection for braille displays.
+	# Translators: String representing the automatic port selection for braille displays.
 	AUTOMATIC_PORT = ("auto", _("Automatic"))
 
 	@classmethod
@@ -1580,6 +1590,11 @@ class BrailleDisplayGesture(inputCore.InputGesture):
 		return ids
 
 	def _get_displayName(self):
+		import brailleInput
+		if isinstance(self, brailleInput.BrailleInputGesture):
+			name = brailleInput.BrailleInputGesture._get_displayName(self)
+			if name:
+				return name
 		return self.id
 
 	def _get_scriptableObject(self):

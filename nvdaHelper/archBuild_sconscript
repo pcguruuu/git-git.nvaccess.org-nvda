@@ -131,9 +131,8 @@ webKitVBufBackend=env.SConscript('vbufBackends/webKit/sconscript')
 env.Depends(webKitVBufBackend,xpsp0compatObj)
 env.Install(libInstallDir,webKitVBufBackend)
 
-if TARGET_ARCH=='x86' and os.path.isdir(Dir('#include/espeak').abspath):
+if TARGET_ARCH=='x86':
 	espeak=env.SConscript('espeak/sconscript')
 	env.Depends(espeak,xpsp0compatObj)
-if TARGET_ARCH=='x86' and os.path.isdir(Dir('#include/liblouis').abspath):
 	liblouis=env.SConscript('liblouis/sconscript')
 	env.Depends(liblouis,xpsp0compatObj)
