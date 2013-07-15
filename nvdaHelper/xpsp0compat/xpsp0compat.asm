@@ -16,9 +16,11 @@
 ;     have the same 'multiply defined symbols' problem as #1, but means that the exe
 ;     won't run on *any* OS without a copy of the dll.
 ;
-.model flat 
-.code
 
+.686p
+.model flat
+
+.code
 extrn _fakeEncodePointer@4 : PROC
 extrn _fakeDecodePointer@4 : PROC
 ; Override dll import symbols:
