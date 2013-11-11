@@ -21,6 +21,7 @@ import NVDAHelper
 import ui
 import winUser
 import winKernel
+import queueHandler
 import config
 import NVDAObjects #Catches errors before loading default appModule
 import api
@@ -32,6 +33,8 @@ runningTable={}
 #: The process ID of NVDA itself.
 NVDAProcessID=None
 _importers=None
+
+_pendingRpcHandles={}
 
 class processEntry32W(ctypes.Structure):
 	_fields_ = [
@@ -94,12 +97,27 @@ def getAppModuleFromProcessID(processID):
 		runningTable[processID]=mod
 	return mod
 
-def update(processID,helperLocalBindingHandle=None,inprocRegistrationHandle=None):
+def setRpcHandlesForAppModuleWithProcessID(processID,bindingHandle,registrationHandle):
+	"""
+	temporarily stores the handle information for the given process ID and then ensures that an appModule for that process ID will be around to grab the info.
+	Allows isRpcRegisteredForAppModuleWithProcessID to work between the setting of the info and the fetching by the appModule.
+	"""
+	_pendingRpcHandles[processID]=(bindingHandle,registrationHandle)
+	queueHandler.queueFunction(queueHandler.eventQueue,update,processID)
+
+def isRpcRegisteredForAppModuleWithProcessID(processID):
+	"""Find out if the given processID has a nvdaHelper rpc binding handle associated with it.""" 
+	if processID in _pendingRpcHandles:
+		return True
+	mod=runningTable.get(processID)
+	if mod and mod.helperLocalBindingHandle:
+		return True
+	return False
+
+def update(processID):
 	"""Removes any appModules from the cache whose process has died, and also tries to load a new appModule for the given process ID if need be.
 	@param processID: the ID of the process.
 	@type processID: int
-	@param helperLocalBindingHandle: an optional RPC binding handle pointing to the RPC server for this process
-	@param inprocRegistrationHandle: an optional rpc context handle representing successful registration with the rpc server for this process
 	"""
 	for deadMod in [mod for mod in runningTable.itervalues() if not mod.isAlive]:
 		log.debug("application %s closed"%deadMod.appName)
@@ -113,10 +131,8 @@ def update(processID,helperLocalBindingHandle=None,inprocRegistrationHandle=None
 			log.exception("Error terminating app module %r" % deadMod)
 	# This creates a new app module if necessary.
 	mod=getAppModuleFromProcessID(processID)
-	if helperLocalBindingHandle:
-		mod.helperLocalBindingHandle=helperLocalBindingHandle
-	if inprocRegistrationHandle:
-		mod._inprocRegistrationHandle=inprocRegistrationHandle
+	# Ensure that the appModule's rpc binding handle is fetched from the pending rpc handles
+	mod.helperLocalBindingHandle
 
 def doesAppModuleExist(name):
 	return any(importer.find_module("appModules.%s" % name) for importer in _importers)
@@ -268,7 +284,6 @@ class AppModule(baseObject.ScriptableObject):
 		#: @type: str
 		self.appName=appName
 		self.processHandle=winKernel.openProcess(winKernel.SYNCHRONIZE|winKernel.PROCESS_QUERY_INFORMATION,False,processID)
-		self.helperLocalBindingHandle=None
 		self._inprocRegistrationHandle=None
 
 	def __repr__(self):
@@ -280,16 +295,27 @@ class AppModule(baseObject.ScriptableObject):
 	def _get_isAlive(self):
 		return bool(winKernel.waitForSingleObject(self.processHandle,0))
 
+	def _get_helperLocalBindingHandle(self):
+		try:
+			# pop is not used here as isRpcRegisteredForAppModuleWithProcessID could be called inbetween the pop and the assignment.
+			# Within that time we would want that function to return True, not false.
+			self.helperLocalBindingHandle,self._inprocRegistrationHandle=_pendingRpcHandles[self.processID]
+		except KeyError:
+			return None
+		else:
+			del _pendingRpcHandles[self.processID]
+		return self.helperLocalBindingHandle
+
 	def terminate(self):
 		"""Terminate this app module.
 		This is called to perform any clean up when this app module is being destroyed.
 		Subclasses should call the superclass method first.
 		"""
 		winKernel.closeHandle(self.processHandle)
-		if self._inprocRegistrationHandle:
-			ctypes.windll.rpcrt4.RpcSsDestroyClientContext(ctypes.byref(self._inprocRegistrationHandle))
 		if self.helperLocalBindingHandle:
 			ctypes.windll.rpcrt4.RpcBindingFree(ctypes.byref(self.helperLocalBindingHandle))
+		if self._inprocRegistrationHandle:
+			ctypes.windll.rpcrt4.RpcSsDestroyClientContext(ctypes.byref(self._inprocRegistrationHandle))
 
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
 		"""Choose NVDAObject overlay classes for a given NVDAObject.

@@ -94,7 +94,7 @@ def nvdaControllerInternal_requestRegistration(uuidString):
 		windll.rpcrt4.RpcBindingFree(byref(bindingHandle))
 		return -1
 	import appModuleHandler
-	queueHandler.queueFunction(queueHandler.eventQueue,appModuleHandler.update,pid,helperLocalBindingHandle=bindingHandle,inprocRegistrationHandle=registrationHandle)
+	appModuleHandler.setRpcHandlesForAppModuleWithProcessID(pid,bindingHandle,registrationHandle)
 	return 0
 
 @WINFUNCTYPE(c_long,c_long,c_long,c_long,c_long,c_long)
