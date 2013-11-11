@@ -1,3 +1,4 @@
+import sys
 from ctypes import *
 from ctypes.wintypes import *
 import comtypes.client
@@ -8,6 +9,7 @@ import time
 import api
 import queueHandler
 import controlTypes
+import appModuleHandler
 import NVDAHelper
 import winKernel
 import winUser
@@ -226,11 +228,20 @@ class UIAHandler(COMObject):
 		eventHandler.queueEvent(NVDAEventName,obj)
 
 	def _isUIAWindowHelper(self,hwnd):
+		processID=winUser.getWindowThreadProcessID(hwnd)[0]
 		# UIA in NVDA's process freezes in Windows 7 and below
-		if windll.kernel32.GetCurrentProcessId()==winUser.getWindowThreadProcessID(hwnd)[0]:
+		if windll.kernel32.GetCurrentProcessId()==processID:
 			return False
 		import NVDAObjects.window
 		windowClass=NVDAObjects.window.Window.normalizeWindowClassName(winUser.getClassName(hwnd))
+		# #3618: Internet Explorer metro and Internet Explorer 11 (both metro and desktop in Win 8) never allow NVDA to get an rpc binding handle
+		# and therefore we cannot provide browse mode via a virtualBuffer.
+		# However, these versions do have a reasonable UI Automation implementation, so we should fall back to that in these instances.
+		if windowClass=="Internet Explorer_Server":
+			winver=sys.getwindowsversion()
+			winver=winver.major+(winver.minor/10.0)
+			if winver>=6.2 and not appModuleHandler.isRpcRegisteredForAppModuleWithProcessID(processID):
+				return True
 		# There are certain window classes that just had bad UIA implementations
 		if windowClass in badUIAWindowClassNames:
 			return False
