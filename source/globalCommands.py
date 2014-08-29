@@ -3,7 +3,7 @@
 #A part of NonVisual Desktop Access (NVDA)
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
-#Copyright (C) 2006-2012 NV Access Limited, Peter Vágner, Aleksey Sadovoy, Rui Batista
+#Copyright (C) 2006-2014 NV Access Limited, Peter Vágner, Aleksey Sadovoy, Rui Batista, Joseph Lee
 
 import time
 import itertools
@@ -1368,7 +1368,11 @@ class GlobalCommands(ScriptableObject):
 	script_touch_hoverUp.category=SCRCAT_TOUCH
 
 	def script_touch_rightClick(self, gesture):
-		obj=api.getNavigatorObject() 
+		obj=api.getNavigatorObject()
+		# Ignore invisible or offscreen objects as they cannot even be navigated with touch gestures.
+		if controlTypes.STATE_INVISIBLE in obj.states or controlTypes.STATE_OFFSCREEN in obj.states:
+			return
+		
 		try:
 			p=api.getReviewPosition().pointAtStart
 		except (NotImplementedError, LookupError):
@@ -1383,12 +1387,15 @@ class GlobalCommands(ScriptableObject):
 				# Translators: Reported when the object has no location for the mouse to move to it.
 				ui.message(_("object has no location"))
 				return
+			# Don't bother clicking when parts or the entire object is offscreen.
+			if min(left,top,width,height)<0:
+				return
 			x=left+(width/2)
 			y=top+(height/2)
 		winUser.setCursorPos(x,y)
 		self.script_rightMouseClick(gesture)
 	# Translators: Input help mode message for touch right click command.
-	script_touch_rightClick.__doc__=_("Performs right mouse click action at the current touch position")
+	script_touch_rightClick.__doc__=_("Clicks the right mouse button at the current touch position. This is generally used to activate a context menu.")
 	script_touch_rightClick.category=SCRCAT_TOUCH
 
 
