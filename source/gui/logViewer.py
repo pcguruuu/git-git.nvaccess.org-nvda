@@ -82,6 +82,8 @@ class LogViewer(wx.Frame):
 		key = evt.GetKeyCode()
 		if key == wx.WXK_ESCAPE:
 			self.Close()
+		elif key == 19:
+			self.onSaveAsCommand(evt)
 		evt.Skip()
 
 def activate():
