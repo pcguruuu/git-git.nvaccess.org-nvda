@@ -540,3 +540,34 @@ class KeyboardInputGesture(inputCore.InputGesture):
 		return dispSource, "+".join(names)
 
 inputCore.registerGestureSource("kb", KeyboardInputGesture)
+
+def injectRawKeyboardInput(isPress, scanCode, isExtended):
+	"""Injet raw input from a system keyboard that is not handled natively by Windows.
+	For example, this might be used for input from a QWERTY keyboard on a braille display.
+	NVDA will treat the key as if it had been pressed on a normal system keyboard.
+	If it is not handled by NVDA, it will be sent to the operating system.
+	@param isPress: Whether the key is being pressed.
+	@type isPress: bool
+	@param scanCode: The scan code (PC set 1) of the key.
+	@type scanCode: int
+	@param isExtended: Whether this is an extended key.
+	@type isExtended: bool
+	"""
+	vkCode = winUser.user32.MapVirtualKeyExW(scanCode, winUser.MAPVK_VSC_TO_VK_EX, getInputHkl())
+	if isPress:
+		shouldSend = internal_keyDownEvent(vkCode, scanCode, isExtended, False)
+	else:
+		shouldSend = internal_keyUpEvent(vkCode, scanCode, isExtended, False)
+	if shouldSend:
+		flags = 0
+		if not isPress:
+			flags |= 2
+		if isExtended:
+			flags |= 1
+		global ignoreInjected
+		ignoreInjected = True
+		try:
+			winUser.keybd_event(vkCode, scanCode, flags, None)
+			wx.Yield()
+		finally:
+			ignoreInjected = False
