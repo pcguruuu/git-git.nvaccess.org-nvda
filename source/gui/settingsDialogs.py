@@ -882,6 +882,11 @@ class ObjectPresentationDialog(SettingsDialog):
 		settingsSizer.Add(self.guessPositionInfoCheckBox,border=10,flag=wx.BOTTOM)
 		# Translators: This is the label for a checkbox in the
 		# object presentation settings dialog.
+		self.playObjectCoordinatesCheckBox=wx.CheckBox(self,wx.NewId(),label=_("&Play object coordinates"))
+		self.playObjectCoordinatesCheckBox.SetValue(config.conf["presentation"]["playObjectCoordinates"])
+		settingsSizer.Add(self.playObjectCoordinatesCheckBox,border=10,flag=wx.BOTTOM)
+		# Translators: This is the label for a checkbox in the
+		# object presentation settings dialog.
 		self.descriptionCheckBox=wx.CheckBox(self,wx.NewId(),label=_("Report object &descriptions"))
 		self.descriptionCheckBox.SetValue(config.conf["presentation"]["reportObjectDescriptions"])
 		settingsSizer.Add(self.descriptionCheckBox,border=10,flag=wx.BOTTOM)
@@ -922,6 +927,7 @@ class ObjectPresentationDialog(SettingsDialog):
 		config.conf["presentation"]["reportKeyboardShortcuts"]=self.shortcutCheckBox.IsChecked()
 		config.conf["presentation"]["reportObjectPositionInformation"]=self.positionInfoCheckBox.IsChecked()
 		config.conf["presentation"]["guessObjectPositionInformationWhenUnavailable"]=self.guessPositionInfoCheckBox.IsChecked()
+		config.conf["presentation"]["playObjectCoordinates"]=self.playObjectCoordinatesCheckBox.IsChecked()
 		config.conf["presentation"]["reportObjectDescriptions"]=self.descriptionCheckBox.IsChecked()
 		config.conf["presentation"]["progressBarUpdates"]["progressBarOutputMode"]=self.progressLabels[self.progressList.GetSelection()][0]
 		config.conf["presentation"]["progressBarUpdates"]["reportBackgroundProgressBars"]=self.reportBackgroundProgressBarsCheckBox.IsChecked()

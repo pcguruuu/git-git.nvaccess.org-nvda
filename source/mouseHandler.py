@@ -18,6 +18,7 @@ from logHandler import log
 import config
 import winInputHook
 import core
+import screenExplorer
 
 WM_MOUSEMOVE=0x0200
 WM_LBUTTONDOWN=0x0201
@@ -42,26 +43,6 @@ def updateMouseShape(name):
 		return
 	curMouseShape=name
 	mouseShapeChanged=1
-
-def playAudioCoordinates(x, y, screenWidth, screenHeight, detectBrightness=True,blurFactor=0):
-	minPitch=config.conf['mouse']['audioCoordinates_minPitch']
-	maxPitch=config.conf['mouse']['audioCoordinates_maxPitch']
-	curPitch=minPitch+((maxPitch-minPitch)*((screenHeight-y)/float(screenHeight)))
-	if detectBrightness:
-		startX=min(max(x-blurFactor,0),screenWidth)
-		width=min((x+blurFactor+1)-startX,screenWidth)
-		startY=min(max(y-blurFactor,0),screenHeight)
-		height=min((y+blurFactor+1)-startY,screenHeight)
-		grey=screenBitmap.rgbPixelBrightness(scrBmpObj.captureImage(startX,startY,width,height)[0][0])
-		brightness=grey/255.0
-		minBrightness=config.conf['mouse']['audioCoordinates_minVolume']
-		maxBrightness=config.conf['mouse']['audioCoordinates_maxVolume']
-		brightness=(brightness*(maxBrightness-minBrightness))+minBrightness
-	else:
-		brightness=config.conf['mouse']['audioCoordinates_maxVolume']
-	leftVolume=int((85*((screenWidth-float(x))/screenWidth))*brightness)
-	rightVolume=int((85*(float(x)/screenWidth))*brightness)
-	tones.beep(curPitch,40,left=leftVolume,right=rightVolume)
 
 #Internal mouse event
 
@@ -90,7 +71,7 @@ def executeMouseMoveEvent(x,y):
 	x=min(max(screenLeft,x),(screenLeft+screenWidth)-1)
 	y=min(max(screenTop,y),(screenTop+screenHeight)-1)
 	if config.conf["mouse"]["audioCoordinatesOnMouseMove"]:
-		playAudioCoordinates(x,y,screenWidth,screenHeight,config.conf['mouse']['audioCoordinates_detectBrightness'],config.conf['mouse']['audioCoordinates_blurFactor'])
+		screenExplorer.playLocationCoordinates(x,y,screenWidth,screenHeight,config.conf['mouse']['audioCoordinates_detectBrightness'],config.conf['mouse']['audioCoordinates_blurFactor'])
 	oldMouseObject=api.getMouseObject()
 	mouseObject=desktopObject.objectFromPoint(x,y)
 	while mouseObject and mouseObject.beTransparentToMouse:

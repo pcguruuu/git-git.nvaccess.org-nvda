@@ -101,6 +101,7 @@ confspec = ConfigObj(StringIO(
 		reportKeyboardShortcuts = boolean(default=true)
 		reportObjectPositionInformation = boolean(default=true)
 		guessObjectPositionInformationWhenUnavailable = boolean(default=false)
+		playObjectCoordinates= boolean(default=false)
 		reportTooltips = boolean(default=false)
 		reportHelpBalloons = boolean(default=true)
 		reportObjectDescriptions = boolean(default=True)
